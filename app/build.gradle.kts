@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -56,7 +57,27 @@ android {
         }
     }
 }
+val appCompatVersion by extra("1.7.1")
+val coreKtxVersion by extra("1.17.0")
+val lifeCycleAndLiveDataCompilerAndViewModelKTXVersion by extra("2.9.2")
+val swipeRefreshLayoutVersion by extra("1.1.0")
+val activityVersion by extra("1.10.1")
+val fragmentVersion by extra("1.8.9")
+val retrofitVersion by extra("3.0.0")
 val roomVersion by extra("2.7.2")
+val coroutineVersion by extra("1.10.2")
+val multidexVersion by extra("2.0.1")
+val materialDesignVersion by extra("1.12.0")
+val coilVersion by extra("2.7.0")
+val hiltVersion by extra("2.57")
+val hiltCompilerVersion by extra("1.2.0")
+val composeVersion by extra("1.9.0")
+val composeFoundationVersion by extra("1.9.0")
+val composeMaterialVersion by extra("1.9.0")
+val composeMaterial3Version by extra("1.3.2")
+val composeNavigationVersion by extra("2.9.3")
+val composeHiltNavigationVersion by extra("1.2.0")
+
 
 dependencies {
     // architecture libarary
@@ -81,6 +102,21 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
+    //Retrofit request
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
+    //Coil load Image
+    implementation("io.coil-kt:coil-compose:$coilVersion")
+    //Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
+    //Materials
+    implementation("com.google.android.material:material:$materialDesignVersion")
+    //Hilt
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    ksp("com.google.dagger:hilt-compiler:$hiltVersion")
+    ksp("androidx.hilt:hilt-compiler:$hiltCompilerVersion")
 
 
 
