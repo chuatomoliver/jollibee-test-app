@@ -117,7 +117,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     ksp("com.google.dagger:hilt-compiler:$hiltVersion")
     ksp("androidx.hilt:hilt-compiler:$hiltCompilerVersion")
-
+    //Multidex
+    implementation("androidx.multidex:multidex:${multidexVersion}")
 
 
 }
