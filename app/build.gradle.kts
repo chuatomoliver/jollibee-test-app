@@ -36,7 +36,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
-        jvmToolchain(11) // or another JDK version
+        jvmToolchain(17) // or another JDK version
         compilerOptions {
             jvmTarget = JvmTarget.fromTarget("17")
             freeCompilerArgs.add("-Xjvm-default=all")
