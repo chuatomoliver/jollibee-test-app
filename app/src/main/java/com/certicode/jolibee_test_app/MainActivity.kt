@@ -8,7 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.certicode.jolibee_test_app.screens.HomeScreen
 import com.certicode.jolibee_test_app.screens.LoginScreen
+import com.certicode.jolibee_test_app.screens.ui_task_add.TaskAddScreen
+import com.certicode.jolibee_test_app.screens.ui_task_list.TaskListScreen
 import com.certicode.jolibee_test_app.ui.theme.QuoteAppTheme
 import com.certicode.jolibee_test_app.ui_screen.QuoteScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,12 +26,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             QuoteAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainApp() // Call the main composable that contains the NavHost
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = Screen.Login.route) {
+                        composable(Screen.Login.route) {
+                            LoginScreen(navController)
+                        }
+                        composable(Screen.Home.route) {
+                            HomeScreen(navController)
+                        }
+                        composable(Screen.TaskList.route) {
+                            TaskListScreen(navController)
+                        }
+                        composable(Screen.TaskAdd.route) {
+                            TaskAddScreen(navController)
+                        }
+                        composable(Screen.quoteScreen.route) {
+                            QuoteScreen(navController)
+                        }
+                    }
                 }
             }
         }

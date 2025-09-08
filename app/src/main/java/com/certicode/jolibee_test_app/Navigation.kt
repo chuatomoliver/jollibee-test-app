@@ -1,4 +1,11 @@
 package com.certicode.jolibee_test_app
 
-class Navigation {
+// In a new file, e.g., "Navigation.kt"
+sealed class Screen(val route: String) {
+    object Login : Screen("login_screen")
+    object Home : Screen("home_screen")
+    object TaskList : Screen("task_list_screen")
+    object TaskAdd : Screen("task_add_screen")
+    // Add other screens here
+    object quoteScreen : Screen("quote_screen")
 }

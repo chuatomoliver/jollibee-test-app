@@ -37,14 +37,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.certicode.jolibee_test_app.R
-import com.certicode.jolibee_test_app.testdata.database.Quote
+import com.certicode.jolibee_test_app.data.jollibeedata.quote.Quote
 
-import com.example.quoteapp.ui.quote.QuoteViewModel
-
-
+import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
-fun QuoteScreen(viewModel: QuoteViewModel = viewModel()) {
+fun QuoteScreen(navController: NavController, viewModel: QuoteViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var text by remember { mutableStateOf("") }
 

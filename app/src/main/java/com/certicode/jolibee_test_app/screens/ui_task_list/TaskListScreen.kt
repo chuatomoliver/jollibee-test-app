@@ -35,7 +35,7 @@ fun TaskListScreen(navController: NavController) {
     val scrollState = rememberScrollState()
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("TaskAddScreen") }) {
+            FloatingActionButton(onClick = { navController.navigate("task_add_screen") }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Task")
             }
         },

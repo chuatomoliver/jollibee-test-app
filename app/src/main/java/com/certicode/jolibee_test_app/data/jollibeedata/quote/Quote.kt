@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.testdata.database
+package com.certicode.jolibee_test_app.data.jollibeedata.quote
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

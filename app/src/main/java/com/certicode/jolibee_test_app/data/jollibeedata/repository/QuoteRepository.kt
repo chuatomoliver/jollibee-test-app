@@ -1,10 +1,10 @@
-package com.certicode.jolibee_test_app.testdata.repository
+package com.certicode.jolibee_test_app.data.jollibeedata.repository
 
-import com.certicode.jolibee_test_app.testdata.database.Quote
+import com.certicode.jolibee_test_app.data.jollibeedata.quote.Quote
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import com.certicode.jolibee_test_app.testdata.database.QuoteDao
+import com.certicode.jolibee_test_app.data.jollibeedata.quote.QuoteDao
 import com.certicode.jolibee_test_app.Result
 
 class QuoteRepository @Inject constructor(private val quoteDao: QuoteDao) {

@@ -1,6 +1,6 @@
 package com.certicode.jolibee_test_app.ui_screen
 
-import com.certicode.jolibee_test_app.testdata.database.Quote
+import com.certicode.jolibee_test_app.data.jollibeedata.quote.Quote
 
 
 sealed class QuoteUiState {

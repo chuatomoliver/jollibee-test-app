@@ -18,22 +18,22 @@ interface TaskDao {
     // Inserts a new task into the database.
     // If a conflict occurs (e.g., on the unique 'ship_id'), it will be replaced.
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insert(task: TasKModel)
+    suspend fun insert(task: TaskModel)
 
     // Updates an existing task in the database.
     @Update
-    suspend fun update(task: TasKModel)
+    suspend fun update(task: TaskModel)
 
     // Deletes a task from the database.
     @Delete
-    suspend fun delete(task: TasKModel)
+    suspend fun delete(task: TaskModel)
 
     // Retrieves all tasks from the database, ordered by task name.
     // Returns a Flow, which emits new data whenever the table changes.
     @Query("SELECT * FROM tasks ORDER BY task_name ASC")
-    fun getAllTasks(): Flow<List<TasKModel>>
+    fun getAllTasks(): Flow<List<TaskModel>>
 
     // Retrieves a single task by its ID.
     @Query("SELECT * FROM tasks WHERE id = :id")
-    suspend fun getTaskById(id: Long): TasKModel?
+    suspend fun getTaskById(id: Long): TaskModel?
 }

@@ -117,8 +117,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     ksp("com.google.dagger:hilt-compiler:$hiltVersion")
     ksp("androidx.hilt:hilt-compiler:$hiltCompilerVersion")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0") // Use the latest stable version
     //Multidex
     implementation("androidx.multidex:multidex:${multidexVersion}")
-
 
 }

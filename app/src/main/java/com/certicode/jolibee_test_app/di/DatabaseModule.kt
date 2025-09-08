@@ -8,8 +8,8 @@ import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryDao
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleDao
 import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsDao
 import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskDao
-import com.certicode.jolibee_test_app.testdata.database.QuoteDao
-import com.certicode.jolibee_test_app.testdata.database.QuoteDatabase
+import com.certicode.jolibee_test_app.data.jollibeedata.quote.QuoteDao
+import com.certicode.jolibee_test_app.data.jollibeedata.database.QuoteDatabase
 
 import dagger.Module
 import dagger.Provides

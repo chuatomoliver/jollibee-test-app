@@ -1,9 +1,8 @@
-package com.example.quoteapp.ui.quote
+package com.certicode.jolibee_test_app.ui_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.certicode.jolibee_test_app.testdata.database.Quote
-import com.certicode.jolibee_test_app.ui_screen.QuoteUiState
+import com.certicode.jolibee_test_app.data.jollibeedata.quote.Quote
 
 import com.certicode.jolibee_test_app.domain.quoteUseCase.AddQuoteUseCase
 import com.certicode.jolibee_test_app.domain.quoteUseCase.DeleteQuoteUseCase

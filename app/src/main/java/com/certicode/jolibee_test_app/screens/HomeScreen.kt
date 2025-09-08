@@ -28,7 +28,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.HorizontalDivider
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
-import com.certicode.jolibee_test_app.screens.ui_task.TaskListScreen
+import com.certicode.jolibee_test_app.screens.ui_task_list.TaskListScreen
 
 // Sealed class to represent different screens
 sealed class BookingScreen(val title: String) {
