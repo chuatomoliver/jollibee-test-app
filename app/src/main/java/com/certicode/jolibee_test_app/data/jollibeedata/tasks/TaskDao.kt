@@ -33,6 +33,12 @@ interface TaskDao {
     @Query("SELECT * FROM tasks ORDER BY task_name ASC")
     fun getAllTasks(): Flow<List<TaskModel>>
 
+    @Query("SELECT * FROM tasks WHERE status = 'Completed' ORDER BY task_name ASC")
+    fun getAllCompletedTasks(): Flow<List<TaskModel>>
+
+    @Query("SELECT * FROM tasks WHERE status = 'Open' ORDER BY task_name ASC")
+    fun getAllOpenTask(): Flow<List<TaskModel>>
+
     // Retrieves a single task by its ID.
     @Query("SELECT * FROM tasks WHERE id = :id")
     suspend fun getTaskById(id: Long): TaskModel?

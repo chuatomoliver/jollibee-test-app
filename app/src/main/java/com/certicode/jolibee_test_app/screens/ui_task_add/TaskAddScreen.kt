@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack // Import the back arrow icon
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,18 +41,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskModel
-import com.certicode.jolibee_test_app.screens.ui_task_add.TaskUiState
-import com.certicode.jolibee_test_app.screens.ui_task_add.TaskViewModel
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskAddScreen( navController: NavController, viewModel: TaskViewModel = hiltViewModel()) {
+fun TaskAddScreen(navController: NavController, viewModel: TaskViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     var taskNameText by remember { mutableStateOf("") }
@@ -62,7 +58,15 @@ fun TaskAddScreen( navController: NavController, viewModel: TaskViewModel = hilt
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add Tasks") }
+                title = { Text("Add Tasks") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
             )
         },
         floatingActionButton = {
@@ -153,88 +157,18 @@ fun TaskAddScreen( navController: NavController, viewModel: TaskViewModel = hilt
                     }
                 }
 
-                // Task List
-                when (uiState) {
-                    is TaskUiState.Success -> {
-                        val tasks = (uiState as TaskUiState.Success).tasks
-                        TaskList(tasks, viewModel)
-                    }
-                    TaskUiState.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-                    }
-                    is TaskUiState.Error -> {
-                        Text(
-                            text = "Error: ${(uiState as TaskUiState.Error).message}",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-
-                    is TaskUiState.Error -> TODO()
-                    TaskUiState.Loading -> TODO()
-                    is TaskUiState.Success -> TODO()
-                }
             }
         }
     }
 }
 
-@Composable
-fun TaskList(tasks: List<TaskModel>, viewModel: TaskViewModel) {
-    LazyColumn {
-        items(
-            items = tasks,
-            key = { task -> task.id }
-        ) { task ->
-            TaskItem(task = task, onDelete = {
-                viewModel.deleteTask(task = task)
-            })
-        }
-    }
-}
 
-@Composable
-fun TaskItem(task: TaskModel, onDelete: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = task.taskName,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Company: ${task.companyFor}",
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = "Status: ${task.status}",
-                    fontSize = 14.sp
-                )
-            }
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Task"
-                )
-            }
-        }
-    }
-}
+
+// TaskItem is a fine standalone composable
+
 
 @Preview(showBackground = true, name = "Cancelled Screen Preview")
 @Composable
 fun TaskAddScreenPreview() {
-    val navController = rememberNavController()
-    TaskAddScreen(navController = navController)
+    TaskAddScreen(navController = rememberNavController())
 }

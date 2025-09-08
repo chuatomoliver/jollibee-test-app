@@ -20,6 +20,28 @@ class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
         }
     }
 
+    fun getAllCompletedTasks(): Flow<Result<List<TaskModel>>> = flow {
+        emit(Result.Loading)
+        try {
+            taskDao.getAllTasks().collect { tasks ->
+                emit(Result.Success(tasks))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e))
+        }
+    }
+
+    fun getAllOpenTasks(): Flow<Result<List<TaskModel>>> = flow {
+        emit(Result.Loading)
+        try {
+            taskDao.getAllTasks().collect { tasks ->
+                emit(Result.Success(tasks))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e))
+        }
+    }
+
     /**
      * Inserts a new task into the database, returning a Result.
      */
