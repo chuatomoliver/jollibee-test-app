@@ -15,8 +15,8 @@ data class TasKModel(
     val taskName: String,
 
     // The unique identifier for the ship, as specified by the user's request.
-    @ColumnInfo(name = "ship_id")
-    val shipId: String,
+    @ColumnInfo(name = "Purpose")
+    val purpose: String,
 
     // The status of the task, corresponding to "Status" in the provided image.
     @ColumnInfo(name = "status")

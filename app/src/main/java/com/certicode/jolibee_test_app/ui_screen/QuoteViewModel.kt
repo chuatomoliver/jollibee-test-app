@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.certicode.jolibee_test_app.testdata.database.Quote
 import com.certicode.jolibee_test_app.ui_screen.QuoteUiState
 
-import com.certicode.jolibee_test_app.domain.AddQuoteUseCase
-import com.certicode.jolibee_test_app.domain.DeleteQuoteUseCase
-import com.certicode.jolibee_test_app.domain.GetQuotesUseCase
+import com.certicode.jolibee_test_app.domain.quoteUseCase.AddQuoteUseCase
+import com.certicode.jolibee_test_app.domain.quoteUseCase.DeleteQuoteUseCase
+import com.certicode.jolibee_test_app.domain.quoteUseCase.GetQuotesUseCase
 import com.certicode.jolibee_test_app.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

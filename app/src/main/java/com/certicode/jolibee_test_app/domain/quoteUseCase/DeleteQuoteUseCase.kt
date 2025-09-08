@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.domain
+package com.certicode.jolibee_test_app.domain.quoteUseCase
 
 import com.certicode.jolibee_test_app.testdata.database.Quote
 import javax.inject.Inject
