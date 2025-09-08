@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens.ui_task_add
+package com.certicode.jolibee_test_app.screens.tasks
 
 import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskModel
 

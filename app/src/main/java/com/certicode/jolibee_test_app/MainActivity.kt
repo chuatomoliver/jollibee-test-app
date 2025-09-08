@@ -13,10 +13,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.screens.HomeScreen
 import com.certicode.jolibee_test_app.screens.LoginScreen
-import com.certicode.jolibee_test_app.screens.ui_task_add.TaskAddScreen
-import com.certicode.jolibee_test_app.screens.ui_task_list.TaskListScreen
+import com.certicode.jolibee_test_app.screens.contacts.ContactListScreen
+import com.certicode.jolibee_test_app.screens.tasks.TaskAddScreen
+import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
 import com.certicode.jolibee_test_app.ui.theme.QuoteAppTheme
 import com.certicode.jolibee_test_app.ui_screen.QuoteScreen
+import com.example.jolibee_test_app.screens.ContactAddScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,22 +49,15 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.quoteScreen.route) {
                             QuoteScreen(navController)
                         }
+                        composable(Screen.ContactList.route) {
+                            ContactListScreen(navController)
+                        }
+                        composable(Screen.ContactAdd.route) {
+                            ContactAddScreen(navController)
+                        }
                     }
                 }
             }
         }
     }
 }
-
-//@AndroidEntryPoint
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            QuoteAppTheme {
-//                QuoteScreen()
-//            }
-//        }
-//    }
-//}

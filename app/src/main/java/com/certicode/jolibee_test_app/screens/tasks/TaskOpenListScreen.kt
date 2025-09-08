@@ -1,6 +1,5 @@
-package com.certicode.jolibee_test_app.screens.ui_task_list
+package com.certicode.jolibee_test_app.screens.tasks
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,8 +37,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskModel
-import com.certicode.jolibee_test_app.screens.ui_task_add.TaskUiState
-import com.certicode.jolibee_test_app.screens.ui_task_add.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,14 +161,10 @@ fun TaskItem(task: TaskModel, onDelete: () -> Unit, onUpdateStatus: (TaskModel) 
     }
 }
 
-@Composable
-fun TaskCompletedListScreen(navController: NavController, viewModel: TaskViewModel = hiltViewModel()) {
-    TaskListScreen(navController = navController, listType = "complete", viewModel = viewModel)
-}
 
-@Preview(showBackground = true, name = "Task List Preview")
+@Preview(showBackground = true)
 @Composable
 fun TaskListScreenPreview() {
     val navController = rememberNavController()
-    TaskListScreen(navController = navController, listType = "open")
+    TaskListScreen(navController = navController)
 }

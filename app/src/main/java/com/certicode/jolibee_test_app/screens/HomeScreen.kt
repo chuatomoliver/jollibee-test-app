@@ -2,9 +2,7 @@ package com.certicode.jolibee_test_app.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -19,16 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.certicode.jolibee_test_app.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.HorizontalDivider
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
-import com.certicode.jolibee_test_app.screens.ui_task_list.TaskListScreen
+import com.certicode.jolibee_test_app.screens.contacts.ContactListScreen
+import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
 
 // Sealed class to represent different screens
 sealed class HomeScreen(val title: String) {
@@ -140,9 +137,9 @@ fun HomeScreen(navController: NavController) {
                     when (selectedScreen) {
                         is HomeScreen.TaskList -> TaskListScreen(navController, listType = "open")
                         is HomeScreen.Completed -> TaskListScreen(navController, listType = "complete")
-                        is HomeScreen.Contacts -> ContactScreen()
-                        is HomeScreen.Tags -> ContactScreen()
-                        is HomeScreen.Categories -> ContactScreen()
+                        is HomeScreen.Contacts -> ContactListScreen(navController)
+                        is HomeScreen.Tags -> ContactListScreen(navController)
+                        is HomeScreen.Categories -> ContactListScreen(navController)
                     }
                 }
             }
@@ -239,73 +236,7 @@ fun TaskButton(
     }
 }
 
-// ---------------------------------------------------------------------------------------------------
 
-
-
-// ---------------------------------------------------------------------------------------------------
-@Composable
-fun CompletedScreen() {
-    val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp)
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        Text(
-            text = "Completed Task List",
-            fontSize = 22.sp,
-            color = colorResource(id = R.color.green),
-            fontWeight = FontWeight.Bold
-        )
-        // Example with mutable state
-        var isTaskCompleted by remember { mutableStateOf(true) }
-        BookingCard(
-            isTaskCompleted = isTaskCompleted,
-            onCompleteClick = { /* No action needed */ },
-            onReopenClick = { isTaskCompleted = false }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Completed Screen Preview")
-@Composable
-fun CompletedScreenPreview() {
-    CompletedScreen()
-}
-
-// ---------------------------------------------------------------------------------------------------
-@Composable
-fun ContactScreen() {
-    val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp)
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        Text(
-            text = "Cancelled Task List",
-            fontSize = 22.sp,
-            color = Color.Red,
-            fontWeight = FontWeight.Bold
-        )
-        BookingCard(
-            isTaskCompleted = false, // Or some other state for cancelled
-            onCompleteClick = { /* No action needed */ },
-            onReopenClick = { /* No action needed */ }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Cancelled Screen Preview")
-@Composable
-fun ContactScreenPreview() {
-    ContactScreen()
-}
 
 // The main preview for the whole HomeScreen
 @Preview(showBackground = true)
