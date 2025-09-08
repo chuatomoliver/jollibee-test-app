@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens.ui_task
+package com.certicode.jolibee_test_app.screens.ui_task_list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
