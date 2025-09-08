@@ -29,9 +29,9 @@ class TaskViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<TaskUiState>(TaskUiState.Loading)
     val uiState: StateFlow<TaskUiState> = _uiState
 
-    init {
-        getTasks()
-    }
+//    init {
+//        getOpenTasks()
+//    }
 
     private fun getTasks() {
         viewModelScope.launch {

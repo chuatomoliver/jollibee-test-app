@@ -23,7 +23,7 @@ class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
     fun getAllCompletedTasks(): Flow<Result<List<TaskModel>>> = flow {
         emit(Result.Loading)
         try {
-            taskDao.getAllTasks().collect { tasks ->
+            taskDao.getAllCompletedTasks().collect { tasks ->
                 emit(Result.Success(tasks))
             }
         } catch (e: Exception) {
@@ -34,7 +34,7 @@ class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
     fun getAllOpenTasks(): Flow<Result<List<TaskModel>>> = flow {
         emit(Result.Loading)
         try {
-            taskDao.getAllTasks().collect { tasks ->
+            taskDao.getAllOpenTask().collect { tasks ->
                 emit(Result.Success(tasks))
             }
         } catch (e: Exception) {

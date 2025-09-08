@@ -31,20 +31,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.certicode.jolibee_test_app.screens.ui_task_list.TaskListScreen
 
 // Sealed class to represent different screens
-sealed class BookingScreen(val title: String) {
-    object TaskList : BookingScreen("Task List")
-    object Completed : BookingScreen("Completed")
-    object Contacts : BookingScreen("Contacts")
-    object Tags : BookingScreen("Tags")
-    object Categories : BookingScreen("Categories")
+sealed class HomeScreen(val title: String) {
+    object TaskList : HomeScreen("Task List")
+    object Completed : HomeScreen("Completed")
+    object Contacts : HomeScreen("Contacts")
+    object Tags : HomeScreen("Tags")
+    object Categories : HomeScreen("Categories")
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     // State to track the currently selected tab
-    val screens = listOf(BookingScreen.TaskList, BookingScreen.Completed, BookingScreen.Contacts, BookingScreen.Tags, BookingScreen.Categories)
-    var selectedScreen by remember { mutableStateOf<BookingScreen>(BookingScreen.TaskList) }
+    val screens = listOf(HomeScreen.TaskList, HomeScreen.Completed, HomeScreen.Contacts, HomeScreen.Tags, HomeScreen.Categories)
+    var selectedScreen by remember { mutableStateOf<HomeScreen>(HomeScreen.TaskList) }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -137,11 +138,11 @@ fun HomeScreen(navController: NavController) {
 
                     // Content based on the selected screen
                     when (selectedScreen) {
-                        is BookingScreen.TaskList -> TaskListScreen(navController)
-                        is BookingScreen.Completed -> CompletedScreen()
-                        is BookingScreen.Contacts -> ContactScreen()
-                        is BookingScreen.Tags -> ContactScreen()
-                        is BookingScreen.Categories -> ContactScreen()
+                        is HomeScreen.TaskList -> TaskListScreen(navController, listType = "open")
+                        is HomeScreen.Completed -> TaskListScreen(navController, listType = "complete")
+                        is HomeScreen.Contacts -> ContactScreen()
+                        is HomeScreen.Tags -> ContactScreen()
+                        is HomeScreen.Categories -> ContactScreen()
                     }
                 }
             }
