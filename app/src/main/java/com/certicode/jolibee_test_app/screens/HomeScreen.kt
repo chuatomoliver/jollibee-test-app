@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +28,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.HorizontalDivider
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import com.certicode.jolibee_test_app.screens.ui_task.TaskListScreen
 
 // Sealed class to represent different screens
 sealed class BookingScreen(val title: String) {
@@ -137,7 +137,7 @@ fun HomeScreen(navController: NavController) {
 
                     // Content based on the selected screen
                     when (selectedScreen) {
-                        is BookingScreen.TaskList -> TaskListScreen()
+                        is BookingScreen.TaskList -> TaskListScreen(navController)
                         is BookingScreen.Completed -> CompletedScreen()
                         is BookingScreen.Contacts -> ContactScreen()
                         is BookingScreen.Tags -> ContactScreen()
@@ -169,12 +169,12 @@ fun BookingCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFE0E0E0))
-                )
+//                Box(
+//                    modifier = Modifier
+//                        .size(90.dp)
+//                        .clip(RoundedCornerShape(8.dp))
+//                        .background(Color(0xFFE0E0E0))
+//                )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
@@ -239,44 +239,8 @@ fun TaskButton(
 }
 
 // ---------------------------------------------------------------------------------------------------
-@Composable
-fun TaskListScreen() {
-    val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp)
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        Text(
-            text = "Open Task List",
-            fontSize = 22.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold
-        )
-        // Example with mutable state for demonstration
-        var isTaskOneCompleted by remember { mutableStateOf(false) }
-        var isTaskTwoCompleted by remember { mutableStateOf(false) }
 
-        BookingCard(
-            isTaskCompleted = isTaskOneCompleted,
-            onCompleteClick = { isTaskOneCompleted = true },
-            onReopenClick = { isTaskOneCompleted = false }
-        )
-        BookingCard(
-            isTaskCompleted = isTaskTwoCompleted,
-            onCompleteClick = { isTaskTwoCompleted = true },
-            onReopenClick = { isTaskTwoCompleted = false }
-        )
-    }
-}
 
-@Preview(showBackground = true, name = "Task List Preview")
-@Composable
-fun TaskListScreenPreview() {
-    TaskListScreen()
-}
 
 // ---------------------------------------------------------------------------------------------------
 @Composable

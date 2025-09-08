@@ -9,6 +9,8 @@ import androidx.navigation.compose.rememberNavController
 
 import com.certicode.jolibee_test_app.screens.HomeScreen
 import com.certicode.jolibee_test_app.screens.LoginScreen
+import com.certicode.jolibee_test_app.screens.ui_task.TaskAddScreen
+import com.certicode.jolibee_test_app.screens.ui_task.TaskListScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,6 +23,12 @@ fun MainApp() {
         }
         composable("home") {
             HomeScreen(navController)
+        }
+        composable("task list") {
+            TaskListScreen(navController)
+        }
+        composable("TaskAddScreen") {
+            TaskAddScreen(navController)
         }
     }
 }
