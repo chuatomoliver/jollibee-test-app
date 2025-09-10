@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens.contacts
+package com.certicode.jolibee_test_app.screens.contacts_business
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,15 +14,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,10 +38,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.screens.TaskButton
-import com.google.android.material.chip.Chip
+
+
 
 @Composable
-fun ContactListScreen(navController: NavController) {
+fun ContactListBusinessScreen(navController: NavController) {
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -55,16 +52,10 @@ fun ContactListScreen(navController: NavController) {
                 horizontalAlignment = Alignment.End
             ) {
                 ExtendedFloatingActionButton(
-                    onClick = { /* Handle Add Business click */ },
+                    onClick = { navController.navigate("contact_add_business_screen")  },
                     modifier = Modifier.padding(bottom = 6.dp),
                     text = { Text("Add Business") },
                     icon = { Icon(Icons.Filled.Add, contentDescription = "Add Business") }
-                )
-                ExtendedFloatingActionButton(
-                    onClick = { navController.navigate("contact_add_screen") },
-                    modifier = Modifier.padding(bottom = 6.dp),
-                    text = { Text("Add People") },
-                    icon = { Icon(Icons.Filled.Add, contentDescription = "Add People") }
                 )
             }
         }
@@ -78,19 +69,8 @@ fun ContactListScreen(navController: NavController) {
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Text(
-                text = "Contact List - People",
-                fontSize = 22.sp,
-                color = colorResource(id = R.color.green),
-                fontWeight = FontWeight.Bold
-            )
             // Example with mutable state
             var isTaskCompleted by remember { mutableStateOf(true) }
-            BookingCard(
-                isTaskCompleted = isTaskCompleted,
-                onCompleteClick = { /* No action needed */ },
-                onReopenClick = { isTaskCompleted = false }
-            )
 
             Text(
                 text = "Contact List - Business",
@@ -250,5 +230,5 @@ val allChips = listOf("Popular", "New Market", "Technology", "Web 3.0", "AI", "C
 @Composable
 fun CompletedScreenPreview() {
     val navController = rememberNavController()
-    ContactListScreen(navController = navController)
+    ContactListBusinessScreen(navController = navController)
 }

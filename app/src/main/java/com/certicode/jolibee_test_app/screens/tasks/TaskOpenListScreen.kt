@@ -1,5 +1,6 @@
 package com.certicode.jolibee_test_app.screens.tasks
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,15 +44,18 @@ import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskModel
 @Composable
 fun TaskListScreen(
     navController: NavController,
-    listType: String = "open", // Default to "open" for flexibility
+    listType: String = "", // Default to "open" for flexibility
     viewModel: TaskViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current // Get the current context
 
     // Use LaunchedEffect to filter the list based on the provided listType
-    LaunchedEffect(key1 = listType) {
+    LaunchedEffect(listType) {
         viewModel.filterTasks(listType)
+        Toast.makeText(context, "Successfully Fetch- $listType", Toast.LENGTH_SHORT).show()
     }
+
 
     Scaffold(
         floatingActionButton = {
@@ -89,8 +94,6 @@ fun TaskListScreen(
                             onDelete = { viewModel.deleteTask(task = task) },
                             onUpdateStatus = { updatedTask ->
                                 viewModel.editTask(updatedTask)
-                                // Refresh the list after the status is updated
-                                viewModel.filterTasks(listType)
                             }
                         )
                     }

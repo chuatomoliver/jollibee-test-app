@@ -1,5 +1,7 @@
 package com.certicode.jolibee_test_app.screens.tasks
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack // Import the back arrow icon
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -22,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,11 +44,37 @@ import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskModel
 @Composable
 fun TaskAddScreen(navController: NavController, viewModel: TaskViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current // Get the current context
 
     var taskNameText by remember { mutableStateOf("") }
     var companyForText by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
     var statusText by remember { mutableStateOf("Open") }
+
+    // Show toast on this screen when a task is successfully added
+    LaunchedEffect(uiState) {
+        if (uiState is TaskUiState.TaskAdded) {
+            Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
+            viewModel.resetTaskAddedState() // Reset the state after showing the toast
+        }
+    }
+
+    // ... rest of your TaskListScreen UI
+    // You should use a when statement to handle the different uiState values
+    when (uiState) {
+        is TaskUiState.Loading -> {
+            // Show a loading indicator
+        }
+        is TaskUiState.Success -> {
+            // Show the list of tasks from (uiState as TaskUiState.Success).tasks
+        }
+        is TaskUiState.Error -> {
+            // Show an error message
+        }
+        is TaskUiState.TaskAdded -> {
+            Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -147,16 +177,12 @@ fun TaskAddScreen(navController: NavController, viewModel: TaskViewModel = hiltV
                         )
                     }
                 }
-
             }
         }
     }
 }
 
-
-
 // TaskItem is a fine standalone composable
-
 
 @Preview(showBackground = true, name = "Cancelled Screen Preview")
 @Composable

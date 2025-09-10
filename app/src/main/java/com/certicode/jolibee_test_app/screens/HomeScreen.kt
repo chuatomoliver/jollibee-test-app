@@ -7,14 +7,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
@@ -24,7 +22,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.HorizontalDivider
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
-import com.certicode.jolibee_test_app.screens.contacts.ContactListScreen
+import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusinessScreen
+import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
 import com.certicode.jollibee_test_app.screens.TaskCard
 
@@ -32,7 +31,8 @@ import com.certicode.jollibee_test_app.screens.TaskCard
 sealed class HomeScreen(val title: String) {
     object TaskList : HomeScreen("Task List")
     object Completed : HomeScreen("Completed")
-    object Contacts : HomeScreen("Contacts")
+    object ContactsPeople : HomeScreen("Contacts-People")
+    object ContactsBusiness : HomeScreen("Contacts-Business")
     object Tags : HomeScreen("Tags")
     object Categories : HomeScreen("Categories")
 
@@ -42,7 +42,7 @@ sealed class HomeScreen(val title: String) {
 @Composable
 fun HomeScreen(navController: NavController) {
     // State to track the currently selected tab
-    val screens = listOf(HomeScreen.TaskList, HomeScreen.Completed, HomeScreen.Contacts, HomeScreen.Tags, HomeScreen.Categories)
+    val screens = listOf(HomeScreen.TaskList, HomeScreen.Completed, HomeScreen.ContactsPeople,HomeScreen.ContactsBusiness, HomeScreen.Tags, HomeScreen.Categories)
     var selectedScreen by remember { mutableStateOf<HomeScreen>(HomeScreen.TaskList) }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -138,9 +138,10 @@ fun HomeScreen(navController: NavController) {
                     when (selectedScreen) {
                         is HomeScreen.TaskList -> TaskListScreen(navController, listType = "open")
                         is HomeScreen.Completed -> TaskListScreen(navController, listType = "complete")
-                        is HomeScreen.Contacts -> ContactListScreen(navController)
+                        is HomeScreen.ContactsPeople -> ContactListPeopleScreen(navController)
+                        is HomeScreen.ContactsBusiness -> ContactListBusinessScreen(navController)
                         is HomeScreen.Tags -> TaskCard(navController)
-                        is HomeScreen.Categories -> ContactListScreen(navController)
+                        is HomeScreen.Categories -> ContactListPeopleScreen(navController)
                     }
                 }
             }
@@ -216,7 +217,6 @@ fun TaskButton(
 ) {
     Button(
         onClick = {
-            if (isTaskCompleted) onReopenClick() else onCompleteClick()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isTaskCompleted) Color.Black else Color.Gray
@@ -233,7 +233,6 @@ fun TaskButton(
 
     Button(
         onClick = {
-            if (isTaskCompleted) onReopenClick() else onCompleteClick()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isTaskCompleted) Color.Black else Color.Gray

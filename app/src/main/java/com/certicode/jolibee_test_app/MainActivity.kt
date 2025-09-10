@@ -11,14 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.certicode.jolibee_test_app.screens.ContactPeopleAddScreen
 import com.certicode.jolibee_test_app.screens.HomeScreen
 import com.certicode.jolibee_test_app.screens.LoginScreen
-import com.certicode.jolibee_test_app.screens.contacts.ContactListScreen
+import com.certicode.jolibee_test_app.screens.contacts_business.ContactBusinessAddScreen
+import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusinessScreen
+import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskAddScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
 import com.certicode.jolibee_test_app.ui.theme.QuoteAppTheme
 import com.certicode.jolibee_test_app.ui_screen.QuoteScreen
-import com.example.jolibee_test_app.screens.ContactAddScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,11 +51,17 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.quoteScreen.route) {
                             QuoteScreen(navController)
                         }
-                        composable(Screen.ContactList.route) {
-                            ContactListScreen(navController)
+                        composable(Screen.ContactListPeople.route) {
+                            ContactListPeopleScreen(navController)
                         }
-                        composable(Screen.ContactAdd.route) {
-                            ContactAddScreen(navController)
+                        composable(Screen.ContactListBusiness.route) {
+                            ContactListBusinessScreen(navController)
+                        }
+                        composable(Screen.ContactAddPeople.route) {
+                            ContactPeopleAddScreen(navController)
+                        }
+                        composable(Screen.ContactAddBusiness.route) {
+                            ContactBusinessAddScreen(navController)
                         }
                     }
                 }

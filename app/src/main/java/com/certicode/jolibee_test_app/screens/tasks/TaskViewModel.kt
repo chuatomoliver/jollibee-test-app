@@ -29,9 +29,9 @@ class TaskViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<TaskUiState>(TaskUiState.Loading)
     val uiState: StateFlow<TaskUiState> = _uiState
 
-//    init {
-//        getOpenTasks()
-//    }
+    init {
+        getOpenTasks()
+    }
 
     private fun getTasks() {
         viewModelScope.launch {
@@ -77,8 +77,13 @@ class TaskViewModel @Inject constructor(
 
     fun addTask(task: TaskModel) {
         viewModelScope.launch {
+            _uiState.value = TaskUiState.Loading // Optional: Show a loading state while adding
             when (val result = addTaskUseCase(task)) {
-                is Result.Success -> { /* No-op, the flow from getTasks() will handle the update */ }
+                is Result.Success -> {
+                    // This is the crucial change.
+                    // Only set the state to TaskAdded and do nothing else.
+                    _uiState.value = TaskUiState.TaskAdded
+                }
                 is Result.Loading -> _uiState.value = TaskUiState.Loading
                 is Result.Error -> _uiState.value =
                     TaskUiState.Error(result.exception.message ?: "Failed to add task")
@@ -107,10 +112,23 @@ class TaskViewModel @Inject constructor(
             }
         }
     }
+    fun resetTaskOpenState(){
+        getOpenTasks()
+    }
+
+    fun resetTaskCompleteState(){
+        getCompleteTasks()
+    }
+
+    // The reset function is now responsible for fetching the new data
+    fun resetTaskAddedState() {
+        // This will trigger the getTasks() function, which will
+        // change the state from TaskAdded to Success and update the UI.
+        getTasks()
+    }
 
     fun filterTasks(filterType: String) {
         when (filterType) {
-            "all" -> getTasks()
             "open" -> getOpenTasks()
             "complete" -> getCompleteTasks()
         }

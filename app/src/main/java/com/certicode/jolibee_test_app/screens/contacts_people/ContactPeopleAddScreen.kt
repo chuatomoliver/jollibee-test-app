@@ -1,5 +1,6 @@
-package com.example.jolibee_test_app.screens
+package com.certicode.jolibee_test_app.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,20 +37,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
+import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
+import com.certicode.jolibee_test_app.screens.contacts_people.ContactsPeopleUiState
+import com.certicode.jolibee_test_app.screens.contacts_people.ContactsPeopleViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactAddScreen(navController: NavController) {
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
+fun ContactPeopleAddScreen(
+    navController: NavController,
+    viewModel: ContactsPeopleViewModel = hiltViewModel()
+) {
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var businessExpanded by remember { mutableStateOf(false) }
@@ -55,6 +63,44 @@ fun ContactAddScreen(navController: NavController) {
     var tagsExpanded by remember { mutableStateOf(false) }
     val tags = listOf("Popular", "New Market", "aaaa", "bbbb", "Trending")
     var selectedTags by remember { mutableStateOf(setOf<String>()) }
+
+    // Collect the UI state from the ViewModel
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current // Get the current context
+
+    // Use a single LaunchedEffect to react to state changes
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is ContactsPeopleUiState.ContactPeopleAdded -> {
+                // Show a toast for a successful addition
+                Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
+
+                // Reset the local state variables
+                name = ""
+                email = ""
+                phone = ""
+                selectedBusiness = "No Business"
+                selectedTags = emptySet()
+
+                // Navigate back
+                navController.popBackStack()
+
+                // Reset the ViewModel's state to prevent the toast from showing again
+                viewModel.resetPersonAddedState()
+            }
+            is ContactsPeopleUiState.ContactPeopleDeleted -> {
+                // The delete toast logic would go here, likely on a different screen.
+            }
+            is ContactsPeopleUiState.Error -> {
+                // Show an error toast
+                val errorMessage = (uiState as ContactsPeopleUiState.Error).message
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            }
+            else -> {
+                // Do nothing for Loading or Success states
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -65,7 +111,7 @@ fun ContactAddScreen(navController: NavController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.Black // Set the tint color to black
+                            tint = Color.Black
                         )
                     }
                 },
@@ -85,20 +131,12 @@ fun ContactAddScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // No Text("Add new Person") here anymore, as it's now the TopAppBar title.
-
-            Spacer(modifier = Modifier.height(8.dp)) // Add some space below the top bar
+            Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = firstName,
-                onValueChange = { firstName = it },
-                label = { Text("First Name") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = lastName,
-                onValueChange = { lastName = it },
-                label = { Text("Last Name") },
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -114,12 +152,10 @@ fun ContactAddScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // The rest of your form content (Dropdowns, Buttons, etc.) remains here...
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Business Dropdown
                 ExposedDropdownMenuBox(
                     expanded = businessExpanded,
                     onExpandedChange = { businessExpanded = !businessExpanded },
@@ -160,7 +196,6 @@ fun ContactAddScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Tags Dropdown
                 ExposedDropdownMenuBox(
                     expanded = tagsExpanded,
                     onExpandedChange = { tagsExpanded = !tagsExpanded },
@@ -216,7 +251,18 @@ fun ContactAddScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.End
             ) {
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = { /* Handle Add Person */ }) {
+                Button(
+                    onClick = {
+                        val newPerson = PeopleModel(
+                            name = name,
+                            email = email,
+                            phone = phone,
+                            business = selectedBusiness,
+                            tags = selectedTags.joinToString()
+                        )
+                        viewModel.addPerson(newPerson)
+                    }
+                ) {
                     Text("Add Person")
                 }
             }
@@ -228,5 +274,5 @@ fun ContactAddScreen(navController: NavController) {
 @Composable
 fun PreviewContactAddScreen() {
     val navController = rememberNavController()
-    ContactAddScreen(navController = navController)
+    ContactPeopleAddScreen(navController = navController)
 }

@@ -30,7 +30,7 @@ interface PeopleDao {
 
     // Retrieves all people from the database, ordered by name.
     // Returns a Flow, which emits new data whenever the table changes.
-    @Query("SELECT * FROM people ORDER BY name ASC")
+    @Query("SELECT * FROM people ORDER BY id DESC")
     fun getAllPeople(): Flow<List<PeopleModel>>
 
     // Retrieves a single person by their ID.
