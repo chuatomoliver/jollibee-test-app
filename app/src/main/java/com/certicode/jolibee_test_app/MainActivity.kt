@@ -8,15 +8,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.certicode.jolibee_test_app.screens.ContactPeopleAddScreen
 import com.certicode.jolibee_test_app.screens.HomeScreen
 import com.certicode.jolibee_test_app.screens.LoginScreen
 import com.certicode.jolibee_test_app.screens.contacts_business.ContactBusinessAddScreen
 import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusinessScreen
 import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
+import com.certicode.jolibee_test_app.screens.contacts_people.ContactListUpdatePeopleScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskAddScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
 import com.certicode.jolibee_test_app.ui.theme.QuoteAppTheme
@@ -62,6 +65,16 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.ContactAddBusiness.route) {
                             ContactBusinessAddScreen(navController)
+                        }
+                        composable(
+                            route = "contact_update_people_screen/{personId}",
+                            arguments = listOf(navArgument("personId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val personId = backStackEntry.arguments?.getString("personId") ?: ""
+                            ContactListUpdatePeopleScreen(
+                                navController = navController,
+                                personId = personId
+                            )
                         }
                     }
                 }

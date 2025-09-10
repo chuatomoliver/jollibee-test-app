@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,33 +66,20 @@ fun ContactListPeopleScreen(
     }
 
     LaunchedEffect(uiState) {
-        when (uiState) {
-            is ContactsPeopleUiState.ContactPeopleAdded -> {
-                // This toast would be in your add screen
-                Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
-                viewModel.resetPersonAddedState()
-                navController.popBackStack()
-            }
-            is ContactsPeopleUiState.ContactPeopleUpdated -> {
-                // Show a toast for a successful update
-                Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
-                viewModel.resetPersonAddedState()
-                navController.popBackStack()
-            }
-            is ContactsPeopleUiState.ContactPeopleDeleted -> {
-                // Show a toast for a successful deletion
-                Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
-                viewModel.resetPersonAddedState()
-                navController.popBackStack()
-            }
-            is ContactsPeopleUiState.Error -> {
-                // Show an error toast
-                val errorMessage = (uiState as ContactsPeopleUiState.Error).message
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-            }
-            else -> {
-                // Do nothing for Loading or Success states
-            }
+        val message = when (uiState) {
+            is ContactsPeopleUiState.ContactPeopleAdded -> "Successfully Added"
+            is ContactsPeopleUiState.ContactPeopleUpdated -> "Successfully Updated"
+            is ContactsPeopleUiState.ContactPeopleDeleted -> "Successfully Deleted"
+            is ContactsPeopleUiState.Error -> null // Handle error separately
+            else -> null // Handle other states
+        }
+
+        if (message != null) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            viewModel.resetPersonAddedState() // Resets the state to prevent re-triggering
+            navController.popBackStack() // Navigates back after the operation
+        } else if (uiState is ContactsPeopleUiState.Error) {
+            Toast.makeText(context, (uiState as ContactsPeopleUiState.Error).message, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -151,14 +139,12 @@ fun ContactListPeopleScreen(
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            items(currentState.people) { person ->
+                            items(currentState.people) { people ->
                                 ContactCard(
-                                    person = person,
-                                    onDeleteClick = { viewModel.deletePerson(person) },
+                                    person = people,
+                                    onDeleteClick = { viewModel.deletePerson(people) },
                                     onEditClick = {
-                                        // TODO: Implement navigation to edit screen with person data.
-                                        // For example: navController.navigate("contact_edit_people_screen/${person.id}")
-                                        // Or pass the object directly.
+                                        navController.navigate("contact_update_people_screen/${people.id}")
                                     }
                                 )
                             }
@@ -179,13 +165,10 @@ fun ContactListPeopleScreen(
                     }
                 }
                 is ContactsPeopleUiState.ContactPeopleAdded -> {
-                    // This state is handled by the LaunchedEffect to trigger a data refresh.
-                    // No UI is shown here.
                 }
-
-                ContactsPeopleUiState.ContactPeopleAdded -> TODO()
                 ContactsPeopleUiState.ContactPeopleDeleted -> TODO()
                 ContactsPeopleUiState.ContactPeopleUpdated -> TODO()
+                is ContactsPeopleUiState.PersonLoaded -> TODO()
             }
         }
     }
@@ -227,9 +210,10 @@ fun ContactCard(
 
                     // Chip Layout Logic
                     // This part dynamically handles multiple rows for tags.
-                    Row(
+                    FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         person.tags.split(",").forEach { tag ->
                             Chip(text = tag.trim())

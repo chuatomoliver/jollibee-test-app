@@ -51,8 +51,8 @@ class PeopleRepository @Inject constructor(private val peopleDao: PeopleDao) {
      */
     suspend fun getPeopleById(id: Long): Result<PeopleModel?> {
         return try {
-            val business = peopleDao.getPersonById(id)
-            Result.Success(business)
+            val people = peopleDao.getPersonById(id)
+            Result.Success(people)
         } catch (e: Exception) {
             Result.Error(e)
         }
