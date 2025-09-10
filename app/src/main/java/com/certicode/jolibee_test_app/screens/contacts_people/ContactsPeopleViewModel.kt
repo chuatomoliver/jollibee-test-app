@@ -26,9 +26,9 @@ class ContactsPeopleViewModel @Inject constructor(
 ) : ViewModel() {
 
     // The mutable state flow that holds the current UI state.
-    private val _uiState = MutableStateFlow<ContactsPeopleUiState>(ContactsPeopleUiState.Loading)
+    private val _uiState = MutableStateFlow<PeopleUiState>(PeopleUiState.Loading)
     // The public, read-only state flow that UI components can observe.
-    val uiState: StateFlow<ContactsPeopleUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<PeopleUiState> = _uiState.asStateFlow()
 
     init {
         // Fetch the initial list of people when the ViewModel is created.
@@ -45,9 +45,9 @@ class ContactsPeopleViewModel @Inject constructor(
         viewModelScope.launch {
             getPeopleUseCase().collect { result ->
                 _uiState.value = when (result) {
-                    is Result.Success -> ContactsPeopleUiState.Success(result.data)
-                    is Result.Loading -> ContactsPeopleUiState.Loading
-                    is Result.Error -> ContactsPeopleUiState.Error(
+                    is Result.Success -> PeopleUiState.Success(result.data)
+                    is Result.Loading -> PeopleUiState.Loading
+                    is Result.Error -> PeopleUiState.Error(
                         result.exception.message ?: "Unknown error"
                     )
                 }
@@ -61,15 +61,15 @@ class ContactsPeopleViewModel @Inject constructor(
      */
     fun addPerson(people: PeopleModel) {
         viewModelScope.launch {
-            _uiState.value = ContactsPeopleUiState.Loading
+            _uiState.value = PeopleUiState.Loading
             when (val result = addPeopleUseCase(people)) {
                 is Result.Success -> {
                     // Update state to indicate the person was successfully added.
-                    _uiState.value = ContactsPeopleUiState.ContactPeopleAdded
+                    _uiState.value = PeopleUiState.ContactPeopleAdded
                 }
-                is Result.Loading -> _uiState.value = ContactsPeopleUiState.Loading
+                is Result.Loading -> _uiState.value = PeopleUiState.Loading
                 is Result.Error -> _uiState.value =
-                    ContactsPeopleUiState.Error(result.exception.message ?: "Failed to add person")
+                    PeopleUiState.Error(result.exception.message ?: "Failed to add person")
             }
         }
     }
@@ -83,11 +83,11 @@ class ContactsPeopleViewModel @Inject constructor(
             when (val result = deletePeopleUseCase(person)) {
                 is Result.Success -> {
                     // Update state to indicate the person was successfully deleted.
-                    _uiState.value = ContactsPeopleUiState.ContactPeopleDeleted
+                    _uiState.value = PeopleUiState.ContactPeopleDeleted
                 }
-                is Result.Loading -> _uiState.value = ContactsPeopleUiState.Loading
+                is Result.Loading -> _uiState.value = PeopleUiState.Loading
                 is Result.Error -> _uiState.value =
-                    ContactsPeopleUiState.Error(result.exception.message ?: "Failed to delete person")
+                    PeopleUiState.Error(result.exception.message ?: "Failed to delete person")
             }
         }
     }
@@ -101,11 +101,11 @@ class ContactsPeopleViewModel @Inject constructor(
             when (val result = editPeopleUseCase(person)) {
                 is Result.Success -> {
                     // Update state to indicate the person was successfully edited.
-                    _uiState.value = ContactsPeopleUiState.ContactPeopleUpdated
+                    _uiState.value = PeopleUiState.ContactPeopleUpdated
                 }
-                is Result.Loading -> _uiState.value = ContactsPeopleUiState.Loading
+                is Result.Loading -> _uiState.value = PeopleUiState.Loading
                 is Result.Error -> _uiState.value =
-                    ContactsPeopleUiState.Error(result.exception.message ?: "Failed to edit person")
+                    PeopleUiState.Error(result.exception.message ?: "Failed to edit person")
             }
         }
     }
@@ -124,23 +124,23 @@ class ContactsPeopleViewModel @Inject constructor(
      */
     fun getPersonById(peopleId: Long) {
         viewModelScope.launch {
-            _uiState.value = ContactsPeopleUiState.Loading
+            _uiState.value = PeopleUiState.Loading
             when (val result = getPeopleByIdUseCase(peopleId)) {
                 is Result.Success -> {
                     val person = result.data
                     if (person != null) {
-                        _uiState.value = ContactsPeopleUiState.PersonLoaded(person)
+                        _uiState.value = PeopleUiState.PersonLoaded(person)
                     } else {
-                        _uiState.value = ContactsPeopleUiState.Error("Person not found.")
+                        _uiState.value = PeopleUiState.Error("Person not found.")
                     }
                 }
                 is Result.Error -> {
-                    _uiState.value = ContactsPeopleUiState.Error(
+                    _uiState.value = PeopleUiState.Error(
                         result.exception.message ?: "Failed to load person."
                     )
                 }
                 is Result.Loading -> {
-                    _uiState.value = ContactsPeopleUiState.Loading
+                    _uiState.value = PeopleUiState.Loading
                 }
             }
         }

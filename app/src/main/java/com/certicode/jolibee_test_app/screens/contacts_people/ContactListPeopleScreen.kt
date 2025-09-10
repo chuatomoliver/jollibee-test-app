@@ -46,8 +46,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
-import com.certicode.jolibee_test_app.screens.tasks.TaskUiState
-import com.certicode.jolibee_test_app.screens.tasks.TaskViewModel
 
 @Composable
 fun ContactListPeopleScreen(
@@ -65,23 +63,23 @@ fun ContactListPeopleScreen(
         }
     }
 
-    LaunchedEffect(uiState) {
-        val message = when (uiState) {
-            is ContactsPeopleUiState.ContactPeopleAdded -> "Successfully Added"
-            is ContactsPeopleUiState.ContactPeopleUpdated -> "Successfully Updated"
-            is ContactsPeopleUiState.ContactPeopleDeleted -> "Successfully Deleted"
-            is ContactsPeopleUiState.Error -> null // Handle error separately
-            else -> null // Handle other states
-        }
-
-        if (message != null) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            viewModel.resetPersonAddedState() // Resets the state to prevent re-triggering
-            navController.popBackStack() // Navigates back after the operation
-        } else if (uiState is ContactsPeopleUiState.Error) {
-            Toast.makeText(context, (uiState as ContactsPeopleUiState.Error).message, Toast.LENGTH_LONG).show()
-        }
-    }
+//    LaunchedEffect(uiState) {
+//        val message = when (uiState) {
+//            is PeopleUiState.ContactPeopleAdded -> "Successfully Added"
+//            is PeopleUiState.ContactPeopleUpdated -> "Successfully Updated"
+//            is PeopleUiState.ContactPeopleDeleted -> "Successfully Deleted"
+//            is PeopleUiState.Error -> null // Handle error separately
+//            else -> null // Handle other states
+//        }
+//
+//        if (message != null) {
+//            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+//            viewModel.resetPersonAddedState() // Resets the state to prevent re-triggering
+//            navController.popBackStack() // Navigates back after the operation
+//        } else if (uiState is PeopleUiState.Error) {
+//            Toast.makeText(context, (uiState as PeopleUiState.Error).message, Toast.LENGTH_LONG).show()
+//        }
+//    }
 
 
 
@@ -117,7 +115,7 @@ fun ContactListPeopleScreen(
 
             // Handle different UI states.
             when (val currentState = uiState) {
-                is ContactsPeopleUiState.Loading -> {
+                is PeopleUiState.Loading -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -126,7 +124,7 @@ fun ContactListPeopleScreen(
                         CircularProgressIndicator()
                     }
                 }
-                is ContactsPeopleUiState.Success -> {
+                is PeopleUiState.Success -> {
                     if (currentState.people.isEmpty()) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -151,7 +149,7 @@ fun ContactListPeopleScreen(
                         }
                     }
                 }
-                is ContactsPeopleUiState.Error -> {
+                is PeopleUiState.Error -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -164,11 +162,11 @@ fun ContactListPeopleScreen(
                         )
                     }
                 }
-                is ContactsPeopleUiState.ContactPeopleAdded -> {
+                is PeopleUiState.ContactPeopleAdded -> {
                 }
-                ContactsPeopleUiState.ContactPeopleDeleted -> TODO()
-                ContactsPeopleUiState.ContactPeopleUpdated -> TODO()
-                is ContactsPeopleUiState.PersonLoaded -> TODO()
+                PeopleUiState.ContactPeopleDeleted -> TODO()
+                PeopleUiState.ContactPeopleUpdated -> TODO()
+                is PeopleUiState.PersonLoaded -> TODO()
             }
         }
     }

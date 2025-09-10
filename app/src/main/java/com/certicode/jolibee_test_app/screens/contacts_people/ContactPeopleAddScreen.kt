@@ -46,7 +46,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
-import com.certicode.jolibee_test_app.screens.contacts_people.ContactsPeopleUiState
+import com.certicode.jolibee_test_app.screens.contacts_people.PeopleUiState
 import com.certicode.jolibee_test_app.screens.contacts_people.ContactsPeopleViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +71,7 @@ fun ContactPeopleAddScreen(
     // Use a single LaunchedEffect to react to state changes
     LaunchedEffect(uiState) {
         when (uiState) {
-            is ContactsPeopleUiState.ContactPeopleAdded -> {
+            is PeopleUiState.ContactPeopleAdded -> {
                 // Show a toast for a successful addition
                 Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
 
@@ -88,12 +88,12 @@ fun ContactPeopleAddScreen(
                 // Reset the ViewModel's state to prevent the toast from showing again
                 viewModel.resetPersonAddedState()
             }
-            is ContactsPeopleUiState.ContactPeopleDeleted -> {
+            is PeopleUiState.ContactPeopleDeleted -> {
                 // The delete toast logic would go here, likely on a different screen.
             }
-            is ContactsPeopleUiState.Error -> {
+            is PeopleUiState.Error -> {
                 // Show an error toast
-                val errorMessage = (uiState as ContactsPeopleUiState.Error).message
+                val errorMessage = (uiState as PeopleUiState.Error).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
             }
             else -> {
