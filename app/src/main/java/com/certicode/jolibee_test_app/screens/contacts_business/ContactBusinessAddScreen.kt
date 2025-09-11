@@ -1,5 +1,7 @@
 package com.certicode.jolibee_test_app.screens.contacts_business
 
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,41 +26,82 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
+import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
+import com.certicode.jolibee_test_app.screens.contacts_business.BusinessUiState
+import com.certicode.jolibee_test_app.screens.contacts_people.PeopleUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactBusinessAddScreen(navController: NavController) {
+fun ContactBusinessAddScreen(
+    navController: NavController,
+    viewModel: ContactsBusinessViewModel = hiltViewModel()
+) {
+
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
     // State variables for text fields
     var businessName by remember { mutableStateOf("") }
     var contactEmail by remember { mutableStateOf("") }
 
-    // State for the "Business" dropdown
-    val businesses = listOf("No Business", "Acme Corp", "Globex Inc.")
-    var expandedBusiness by remember { mutableStateOf(false) }
-    var selectedBusiness by remember { mutableStateOf(businesses[0]) }
-
     // State for the "Tags" dropdown
-    val tags = listOf("VIP", "Partner", "Client", "Internal")
+    val tags = listOf("Popular", "Market", "aaaa", "bbbb","Trending")
     var tagsExpanded by remember { mutableStateOf(false) }
     var selectedTags by remember { mutableStateOf(emptySet<String>()) }
 
     // State for the "Business" dropdown
-    val businessOptions = listOf("Retail", "FPCG", "Pastry")
-    var businessExpanded by remember { mutableStateOf(false) }
-    var selectedBusinessOptions by remember { mutableStateOf(emptySet<String>()) }
+    var categoryExpanded by remember { mutableStateOf(false) }
+    var selectedCategories by remember { mutableStateOf(emptySet<String>()) } // Corrected: Use a set for multi-selection
 
+    LaunchedEffect(uiState) {
+        // Your logic for LaunchedEffect
+    }
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is BusinessUiState.ContactBusinessAdded -> {
+                // Show a toast for a successful addition
+                Toast.makeText(context, "Business Added Successfully", Toast.LENGTH_SHORT).show()
+
+                // Reset the local state variables
+                businessName = ""
+                contactEmail = ""
+                selectedCategories = emptySet()
+                selectedTags = emptySet()
+
+                // Navigate back
+                navController.popBackStack()
+
+                // Reset the ViewModel's state to prevent the toast from showing again
+                viewModel.resetBusinessAddedState()
+            }
+            is BusinessUiState.Error -> {
+                // Show an error toast
+                val errorMessage = (uiState as BusinessUiState.Error).message
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            }
+            else -> {
+                // Do nothing for Loading, Success, etc.
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -69,7 +112,7 @@ fun ContactBusinessAddScreen(navController: NavController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.Black // Set the tint color to black
+                            tint = Color.Black
                         )
                     }
                 },
@@ -87,7 +130,6 @@ fun ContactBusinessAddScreen(navController: NavController) {
                 .padding(paddingValues)
                 .padding(horizontal = 24.dp, vertical = 8.dp)
         ) {
-            // Email Field
             OutlinedTextField(
                 value = businessName,
                 onValueChange = { businessName = it },
@@ -97,7 +139,6 @@ fun ContactBusinessAddScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Phone Field
             OutlinedTextField(
                 value = contactEmail,
                 onValueChange = { contactEmail = it },
@@ -107,47 +148,47 @@ fun ContactBusinessAddScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Business Dropdown Menu (Checkbox style)
+            // Categories Dropdown Menu
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ExposedDropdownMenuBox(
-                    expanded = businessExpanded,
-                    onExpandedChange = { businessExpanded = !businessExpanded },
+                    expanded = categoryExpanded,
+                    onExpandedChange = { categoryExpanded = !categoryExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
                         readOnly = true,
-                        value = if (selectedBusinessOptions.isEmpty()) "Select Category" else selectedBusinessOptions.joinToString(", "),
+                        value = if (selectedCategories.isEmpty()) "Select Categories" else selectedCategories.joinToString(", "),
                         onValueChange = {},
                         label = { Text("Categories") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(businessExpanded) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(categoryExpanded) },
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
-                        expanded = businessExpanded,
-                        onDismissRequest = { businessExpanded = false }
+                        expanded = categoryExpanded,
+                        onDismissRequest = { categoryExpanded = false }
                     ) {
-                        businessOptions.forEach { option ->
+                        listOf("RCG", "Cat 1", "Cat 2", "aaaa","bbbb").forEach { category ->
                             DropdownMenuItem(
-                                text = { Text(text = option) },
+                                text = { Text(text = category) },
                                 onClick = {
-                                    selectedBusinessOptions = if (selectedBusinessOptions.contains(option)) {
-                                        selectedBusinessOptions - option
+                                    selectedCategories = if (selectedCategories.contains(category)) {
+                                        selectedCategories - category
                                     } else {
-                                        selectedBusinessOptions + option
+                                        selectedCategories + category
                                     }
                                 },
                                 leadingIcon = {
                                     Checkbox(
-                                        checked = selectedBusinessOptions.contains(option),
+                                        checked = selectedCategories.contains(category),
                                         onCheckedChange = { isChecked ->
-                                            selectedBusinessOptions = if (isChecked) {
-                                                selectedBusinessOptions + option
+                                            selectedCategories = if (isChecked) {
+                                                selectedCategories + category
                                             } else {
-                                                selectedBusinessOptions - option
+                                                selectedCategories - category
                                             }
                                         }
                                     )
@@ -160,7 +201,7 @@ fun ContactBusinessAddScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Tags Dropdown Menu (Checkbox style)
+            // Tags Dropdown Menu
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -213,22 +254,23 @@ fun ContactBusinessAddScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Add Person Button aligned to the end
+            // Add Business Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                Button(onClick = { /* Handle form submission */ }) {
+                Button(onClick = {
+                    val newBusiness = BusinessModel(
+                        businessName = businessName,
+                        email = contactEmail,
+                        categories = selectedCategories.joinToString(separator = ","), // Pass the list of selected categories
+                        tags = selectedTags.joinToString(separator = ",")
+                    )
+                    viewModel.addBusiness(newBusiness)
+                }) {
                     Text("Add Business")
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddPersonScreenPreview() {
-    val navController = rememberNavController()
-    ContactBusinessAddScreen(navController = navController)
 }

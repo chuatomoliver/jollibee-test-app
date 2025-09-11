@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ContactBusinessViewModel @Inject constructor(
+class ContactsBusinessViewModel @Inject constructor(
     private val getBusinessUseCase: GetBusinessUseCase,
     private val addBusinessUseCase: AddBusinessUseCase,
     private val deleteBusinessUseCase: DeleteBusinessUseCase,
@@ -85,6 +85,10 @@ class ContactBusinessViewModel @Inject constructor(
                     BusinessUiState.Error(result.exception.message ?: "Failed to edit business")
             }
         }
+    }
+
+    fun resetBusinessAddedState() {
+        _uiState.value = BusinessUiState.Success(emptyList())
     }
 
     fun resetBusinessState() {
