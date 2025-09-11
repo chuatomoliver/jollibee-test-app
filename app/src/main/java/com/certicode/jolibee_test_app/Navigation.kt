@@ -17,6 +17,9 @@ sealed class Screen(val route: String) {
     object TagList : Screen("tag_list_screen")
     object TagAdd : Screen("tag_add_screen")
 
+    object CategoryList : Screen("category_list_screen")
+    object CategoryAdd : Screen("category_add_screen")
+
     // test screen
     object quoteScreen : Screen("quote_screen")
 }

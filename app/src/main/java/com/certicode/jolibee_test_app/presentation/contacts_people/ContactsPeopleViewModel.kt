@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens.contacts_people
+package com.certicode.jolibee_test_app.presentation.contacts_people
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

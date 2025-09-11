@@ -1,7 +1,6 @@
-package com.certicode.jolibee_test_app.screens.contacts_business
+package com.certicode.jolibee_test_app.presentation.contacts_business
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,16 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
-import com.certicode.jolibee_test_app.screens.contacts_business.BusinessUiState
-import com.certicode.jolibee_test_app.screens.contacts_people.PeopleUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

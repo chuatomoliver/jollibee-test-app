@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.ui_screen
+package com.certicode.jolibee_test_app.presentation.ui_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

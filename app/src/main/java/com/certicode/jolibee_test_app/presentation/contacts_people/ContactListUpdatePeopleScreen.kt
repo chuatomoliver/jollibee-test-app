@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens
+package com.certicode.jolibee_test_app.presentation.contacts_people
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -43,16 +43,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
-import com.certicode.jolibee_test_app.screens.contacts_people.PeopleUiState
-import com.certicode.jolibee_test_app.screens.contacts_people.ContactsPeopleViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactPeopleAddScreen(
+fun ContactListUpdatePeopleScreen(
     navController: NavController,
+    personId: String,
     viewModel: ContactsPeopleViewModel = hiltViewModel()
 ) {
     var name by remember { mutableStateOf("") }
@@ -64,49 +62,46 @@ fun ContactPeopleAddScreen(
     val tags = listOf("Popular", "New Market", "aaaa", "bbbb", "Trending")
     var selectedTags by remember { mutableStateOf(setOf<String>()) }
 
-    // Collect the UI state from the ViewModel
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current // Get the current context
+    val context = LocalContext.current
 
-    // Use a single LaunchedEffect to react to state changes
+    val personIdAsLong = personId.toLongOrNull()
+
+    LaunchedEffect(personIdAsLong) {
+        if (personIdAsLong != null) {
+            viewModel.getPersonById(personIdAsLong)
+        }
+    }
+
     LaunchedEffect(uiState) {
-        when (uiState) {
-            is PeopleUiState.ContactPeopleAdded -> {
-                // Show a toast for a successful addition
+        when (val state = uiState) {
+            is PeopleUiState.PersonLoaded -> {
+                val person = state.person
+                name = person.name
+                email = person.email
+                phone = person.phone
+                selectedBusiness = person.business
+                selectedTags = person.tags.split(",").map { it.trim() }.toSet()
 
 
-                // Reset the local state variables
-                name = ""
-                email = ""
-                phone = ""
-                selectedBusiness = "No Business"
-                selectedTags = emptySet()
-
-                Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
-                // Navigate back
-//                navController.popBackStack()
-
-                // Reset the ViewModel's state to prevent the toast from showing again
+            }
+            is PeopleUiState.ContactPeopleUpdated -> { // Corrected this line
+                Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
                 viewModel.resetPersonAddedState()
             }
-            is PeopleUiState.ContactPeopleDeleted -> {
-                // The delete toast logic would go here, likely on a different screen.
-            }
             is PeopleUiState.Error -> {
-                // Show an error toast
-                val errorMessage = (uiState as PeopleUiState.Error).message
+                val errorMessage = state.message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
             }
-            else -> {
-                // Do nothing for Loading or Success states
-            }
+            else -> {}
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Add new Person") },
+                title = { Text(text = "Update People") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -133,7 +128,6 @@ fun ContactPeopleAddScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
-
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -177,7 +171,7 @@ fun ContactPeopleAddScreen(
                         onDismissRequest = { businessExpanded = false },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        listOf("No Business", "Jollibee Foods Corp", "Red Ribbon", "aaaa","Mang Inasal").forEach { business ->
+                        listOf("No Business", "Jollibee Foods Corp", "Red Ribbon", "aaaa", "Mang Inasal").forEach { business ->
                             Text(
                                 text = business,
                                 modifier = Modifier
@@ -192,7 +186,6 @@ fun ContactPeopleAddScreen(
                     }
                 }
             }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -246,7 +239,6 @@ fun ContactPeopleAddScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
@@ -254,17 +246,18 @@ fun ContactPeopleAddScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
-                        val newPerson = PeopleModel(
+                        val updatedPerson = PeopleModel(
+                            id = personId.toLong(),
                             name = name,
                             email = email,
                             phone = phone,
                             business = selectedBusiness,
-                            tags = selectedTags.joinToString()
+                            tags = selectedTags.joinToString(",")
                         )
-                        viewModel.addPerson(newPerson)
+                        viewModel.editPerson(updatedPerson)
                     }
                 ) {
-                    Text("Add Person")
+                    Text("Update")
                 }
             }
         }
@@ -274,6 +267,5 @@ fun ContactPeopleAddScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewContactAddScreen() {
-    val navController = rememberNavController()
-    ContactPeopleAddScreen(navController = navController)
+    // Preview function content remains the same
 }

@@ -1,8 +1,6 @@
-package com.certicode.jolibee_test_app.screens.contacts_business
+package com.certicode.jolibee_test_app.presentation.contacts_business
 
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
-import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
-import com.certicode.jolibee_test_app.screens.contacts_people.PeopleUiState
 
 interface BusinessUiState {
     object Loading : BusinessUiState

@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens.tags
+package com.certicode.jolibee_test_app.presentation.category
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,27 +22,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagUiState
-import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
-import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsViewModel
+import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryModel
+
 
 /**
- * Composable function for the Tag screen.
- * This screen displays a list of tags and provides a floating action button to add a new tag.
- * It observes the [TagsViewModel] for UI state changes.
+ * Composable function for the Category screen.
+ * This screen displays a list of categories and provides a floating action button to add a new one.
+ * It observes the [CategoryViewModel] for UI state changes.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TagScreen(
+fun CategoryScreen(
     navController: NavController,
-    viewModel: TagsViewModel = hiltViewModel()
+    viewModel: CategoryViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.tagsState.collectAsState()
+    // Collect the UI state from the ViewModel.
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("tag_add_screen") }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Tag")
+            FloatingActionButton(onClick = { navController.navigate("category_add_screen") }) {
+                Icon(Icons.Default.Add, contentDescription = "Add Category")
             }
         },
         floatingActionButtonPosition = FabPosition.End
@@ -53,27 +53,39 @@ fun TagScreen(
                 .padding(padding),
             contentAlignment = Alignment.TopStart
         ) {
-            when (uiState) {
-                is TagUiState.Loading -> {
-                    CircularProgressIndicator()
+            when (val state = uiState) {
+                is CategoryUiState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-                is TagUiState.Success -> {
-                    val tags = (uiState as TagUiState.Success).tags
-                    if (tags.isEmpty()) {
-                        Text("No tags found.")
+                is CategoryUiState.Success -> {
+                    val categories = state.categories
+                    if (categories.isEmpty()) {
+                        Text(
+                            text = "No categories found.",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     } else {
                         LazyColumn(
                             modifier = Modifier.padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items(tags) { tag ->
-                                TagItem(tag = tag, onDelete = { viewModel.deleteTag(tag) })
+                            items(categories) { category ->
+                                CategoryItem(category = category, onDelete = { viewModel.deleteCategory(category) })
                             }
                         }
                     }
                 }
-                is TagUiState.Error -> {
-                    Text("Error: ${(uiState as TagUiState.Error).message}")
+                is CategoryUiState.Error -> {
+                    Text(
+                        text = "Error: ${state.message}",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                is CategoryUiState.Empty -> {
+                    Text(
+                        text = "No categories found.",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
@@ -81,15 +93,14 @@ fun TagScreen(
 }
 
 /**
- * Composable to display a single tag item as a Card.
- * @param tag The [TagsModel] to display.
+ * Composable to display a single category item as a Card.
+ * @param category The [CategoryModel] to display.
  * @param onDelete The callback function to be invoked when the delete button is clicked.
  */
 @Composable
-private fun TagItem(tag: TagsModel, onDelete: () -> Unit) {
+private fun CategoryItem(category: CategoryModel, onDelete: () -> Unit) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
@@ -100,7 +111,7 @@ private fun TagItem(tag: TagsModel, onDelete: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = tag.tagName,
+                text = category.categoryName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
@@ -108,7 +119,7 @@ private fun TagItem(tag: TagsModel, onDelete: () -> Unit) {
             IconButton(onClick = onDelete) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Tag"
+                    contentDescription = "Delete Category"
                 )
             }
         }

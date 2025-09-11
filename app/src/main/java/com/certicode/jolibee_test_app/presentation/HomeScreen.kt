@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens
+package com.certicode.jolibee_test_app.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,11 +22,11 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.HorizontalDivider
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
-import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusinessScreen
-import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
-import com.certicode.jolibee_test_app.screens.tags.TagScreen
-import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
-import com.certicode.jollibee_test_app.screens.TaskCard
+import com.certicode.jolibee_test_app.presentation.category.CategoryScreen
+import com.certicode.jolibee_test_app.presentation.contacts_business.ContactListBusinessScreen
+import com.certicode.jolibee_test_app.presentation.contacts_people.ContactListPeopleScreen
+import com.certicode.jolibee_test_app.presentation.tags.TagScreen
+import com.certicode.jolibee_test_app.presentation.tasks.TaskListScreen
 
 // Sealed class to represent different screens
 sealed class HomeScreen(val title: String) {
@@ -142,7 +142,7 @@ fun HomeScreen(navController: NavController) {
                         is HomeScreen.ContactsPeople -> ContactListPeopleScreen(navController)
                         is HomeScreen.ContactsBusiness -> ContactListBusinessScreen(navController)
                         is HomeScreen.Tags -> TagScreen(navController)
-                        is HomeScreen.Categories -> ContactListPeopleScreen(navController)
+                        is HomeScreen.Categories -> CategoryScreen(navController)
                     }
                 }
             }
@@ -150,64 +150,7 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-// Reusable BookingCard, slightly modified for clarity
-//@Composable
-//fun BookingCard(
-//    isTaskCompleted: Boolean,
-//    onCompleteClick: () -> Unit,
-//    onReopenClick: () -> Unit
-//) {
-//    Card(
-//        modifier = Modifier.fillMaxWidth(),
-//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-//        shape = RoundedCornerShape(16.dp),
-//        colors = CardDefaults.cardColors(containerColor = Color.White)
-//    ) {
-//        Column(
-//            modifier = Modifier.padding(16.dp)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//
-//                Spacer(modifier = Modifier.width(16.dp))
-//
-//                Column(
-//                    modifier = Modifier.weight(1f)
-//                ) {
-//                    Text("Task Name", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Bold)
-//                    Text("Task 1", fontSize = 18.sp, color = Color.Black)
-//                    Text("For", fontSize = 18.sp, color = Color.Black, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 10.dp))
-//                    Text("Jollibee Food Corp.", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-//                }
-//            }
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                Button(
-//                    onClick = { /* Handle cancel click */ },
-//                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
-//                    modifier = Modifier.weight(1f),
-//                    shape = RoundedCornerShape(24.dp)
-//                ) {
-//                    Text(text = "Cancel", color = Color.Black, fontWeight = FontWeight.SemiBold)
-//                }
-//                TaskButton(
-//                    isTaskCompleted = isTaskCompleted,
-//                    onCompleteClick = onCompleteClick,
-//                    onReopenClick = onReopenClick,
-//                    modifier = Modifier.weight(1f)
-//                )
-//            }
-//        }
-//    }
-//}
+
 
 @Composable
 fun TaskButton(

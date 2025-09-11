@@ -1,7 +1,6 @@
-package com.certicode.jolibee_test_app.screens.tags
+package com.certicode.jolibee_test_app.presentation.tags
 
 import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
-import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskModel
 
 
 sealed interface TagUiState {

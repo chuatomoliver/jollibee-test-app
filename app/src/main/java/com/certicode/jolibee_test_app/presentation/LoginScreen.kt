@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens
+package com.certicode.jolibee_test_app.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

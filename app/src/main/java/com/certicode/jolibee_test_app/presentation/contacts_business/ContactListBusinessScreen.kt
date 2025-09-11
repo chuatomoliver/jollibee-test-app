@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens.contacts_business
+package com.certicode.jolibee_test_app.presentation.contacts_business
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,8 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
-import com.certicode.jolibee_test_app.screens.TaskButton
-import com.certicode.jolibee_test_app.screens.contacts_people.Chip
+import com.certicode.jolibee_test_app.presentation.contacts_people.Chip
 
 @Composable
 fun ContactListBusinessScreen(

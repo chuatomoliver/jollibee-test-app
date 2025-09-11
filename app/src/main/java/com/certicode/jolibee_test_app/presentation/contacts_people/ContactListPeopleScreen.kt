@@ -1,6 +1,5 @@
-package com.certicode.jolibee_test_app.screens.contacts_people
+package com.certicode.jolibee_test_app.presentation.contacts_people
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.screens.tasks
+package com.certicode.jolibee_test_app.presentation.tasks
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement

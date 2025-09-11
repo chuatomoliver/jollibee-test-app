@@ -1,6 +1,4 @@
-package com.certicode.jolibee_test_app.screens.contacts_business
-
-import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
+package com.certicode.jolibee_test_app.presentation.contacts_business
 
 //sealed interface ContactsBusinessUiState {
 //    object Loading : ContactsBusinessUiState

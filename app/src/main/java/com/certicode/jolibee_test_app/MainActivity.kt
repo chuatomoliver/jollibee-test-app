@@ -14,19 +14,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.certicode.jolibee_test_app.screens.ContactPeopleAddScreen
-import com.certicode.jolibee_test_app.screens.HomeScreen
-import com.certicode.jolibee_test_app.screens.LoginScreen
-import com.certicode.jolibee_test_app.screens.contacts_business.ContactBusinessAddScreen
-import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusinessScreen
-import com.certicode.jolibee_test_app.screens.contacts_business.ContactListUpdateBusinessScreen
-import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
-import com.certicode.jolibee_test_app.screens.contacts_people.ContactListUpdatePeopleScreen
-import com.certicode.jolibee_test_app.screens.tags.TagScreen
-import com.certicode.jolibee_test_app.screens.tasks.TaskAddScreen
-import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
+import com.certicode.jolibee_test_app.presentation.ContactPeopleAddScreen
+import com.certicode.jolibee_test_app.presentation.HomeScreen
+import com.certicode.jolibee_test_app.presentation.LoginScreen
+import com.certicode.jolibee_test_app.presentation.category.CategoryAddScreen
+import com.certicode.jolibee_test_app.presentation.category.CategoryScreen
+import com.certicode.jolibee_test_app.presentation.contacts_business.ContactBusinessAddScreen
+import com.certicode.jolibee_test_app.presentation.contacts_business.ContactListBusinessScreen
+import com.certicode.jolibee_test_app.presentation.contacts_business.ContactListUpdateBusinessScreen
+import com.certicode.jolibee_test_app.presentation.contacts_people.ContactListPeopleScreen
+import com.certicode.jolibee_test_app.presentation.contacts_people.ContactListUpdatePeopleScreen
+import com.certicode.jolibee_test_app.presentation.tags.TagScreen
+import com.certicode.jolibee_test_app.presentation.tasks.TaskAddScreen
+import com.certicode.jolibee_test_app.presentation.tasks.TaskListScreen
 import com.certicode.jolibee_test_app.ui.theme.QuoteAppTheme
-import com.certicode.jolibee_test_app.ui_screen.QuoteScreen
+import com.certicode.jolibee_test_app.presentation.ui_screen.QuoteScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -101,6 +103,12 @@ class MainActivity : ComponentActivity() {
                             TagAddScreen(navController)
                         }
 
+                        composable(Screen.CategoryList.route) {
+                            CategoryScreen(navController)
+                        }
+                        composable(Screen.CategoryAdd.route) {
+                            CategoryAddScreen(navController)
+                        }
 
                     }
                 }
