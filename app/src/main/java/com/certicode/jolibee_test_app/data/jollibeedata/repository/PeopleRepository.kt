@@ -5,6 +5,7 @@ import com.certicode.jolibee_test_app.Result
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleDao
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
+import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -16,6 +17,28 @@ class PeopleRepository @Inject constructor(private val peopleDao: PeopleDao) {
         try {
             peopleDao.getAllPeople().collect { people ->
                 emit(Result.Success(people))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e))
+        }
+    }
+
+    fun getAllBusinessName(): Flow<Result<List<BusinessModel>>> = flow {
+        emit(Result.Loading)
+        try {
+            peopleDao.getBusinessName().collect { business ->
+                emit(Result.Success(business))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e))
+        }
+    }
+
+    fun getTagsName(): Flow<Result<List<TagsModel>>> = flow {
+        emit(Result.Loading)
+        try {
+            peopleDao.getTagsName().collect { tags ->
+                emit(Result.Success(tags))
             }
         } catch (e: Exception) {
             emit(Result.Error(e))

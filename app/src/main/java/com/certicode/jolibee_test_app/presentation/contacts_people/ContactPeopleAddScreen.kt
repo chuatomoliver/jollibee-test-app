@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -42,12 +43,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
+import com.certicode.jolibee_test_app.Result
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
 import com.certicode.jolibee_test_app.presentation.contacts_people.PeopleUiState
 import com.certicode.jolibee_test_app.presentation.contacts_people.ContactsPeopleViewModel
+import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,22 +64,26 @@ fun ContactPeopleAddScreen(
     var phone by remember { mutableStateOf("") }
     var businessExpanded by remember { mutableStateOf(false) }
     var selectedBusiness by remember { mutableStateOf("No Business") }
+
+    // State for the Tags Dropdown
     var tagsExpanded by remember { mutableStateOf(false) }
-    val tags = listOf("Popular", "New Market", "aaaa", "bbbb", "Trending")
     var selectedTags by remember { mutableStateOf(setOf<String>()) }
 
     // Collect the UI state from the ViewModel
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current // Get the current context
 
-    // Use a single LaunchedEffect to react to state changes
+    // Collect the business names state from the ViewModel using collectAsStateWithLifecycle
+    val businessNameState by viewModel.businessNameState.collectAsStateWithLifecycle()
+
+    // 1. Collect the tags state from the ViewModel
+    val tagsNameState by viewModel.tagsNameState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
     LaunchedEffect(uiState) {
         when (uiState) {
             is PeopleUiState.ContactPeopleAdded -> {
                 // Show a toast for a successful addition
-
-
-                // Reset the local state variables
                 name = ""
                 email = ""
                 phone = ""
@@ -83,23 +91,15 @@ fun ContactPeopleAddScreen(
                 selectedTags = emptySet()
 
                 Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
-                // Navigate back
-//                navController.popBackStack()
-
-                // Reset the ViewModel's state to prevent the toast from showing again
+                // Reset the ViewModel's state
                 viewModel.resetPersonAddedState()
-            }
-            is PeopleUiState.ContactPeopleDeleted -> {
-                // The delete toast logic would go here, likely on a different screen.
+                navController.popBackStack()
             }
             is PeopleUiState.Error -> {
-                // Show an error toast
                 val errorMessage = (uiState as PeopleUiState.Error).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
             }
-            else -> {
-                // Do nothing for Loading or Success states
-            }
+            else -> {}
         }
     }
 
@@ -153,6 +153,7 @@ fun ContactPeopleAddScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // Business Dropdown
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -177,22 +178,40 @@ fun ContactPeopleAddScreen(
                         onDismissRequest = { businessExpanded = false },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        listOf("No Business", "Jollibee Foods Corp", "Red Ribbon", "aaaa","Mang Inasal").forEach { business ->
-                            Text(
-                                text = business,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        selectedBusiness = business
-                                        businessExpanded = false
-                                    }
-                                    .padding(16.dp)
-                            )
+                        when (val state = businessNameState) {
+                            is Result.Loading -> {
+                                DropdownMenuItem(
+                                    text = { CircularProgressIndicator(Modifier.width(24.dp).height(24.dp)) },
+                                    onClick = {}
+                                )
+                            }
+                            is Result.Error -> {
+                                DropdownMenuItem(
+                                    text = { Text("Error loading businesses") },
+                                    onClick = {}
+                                )
+                            }
+                            is Result.Success -> {
+                                val businessNames = listOf("No Business") + state.data.map { it.businessName }
+                                businessNames.forEach { business ->
+                                    Text(
+                                        text = business,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                selectedBusiness = business
+                                                businessExpanded = false
+                                            }
+                                            .padding(16.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
 
+            // Tags Dropdown
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -216,35 +235,57 @@ fun ContactPeopleAddScreen(
                         expanded = tagsExpanded,
                         onDismissRequest = { tagsExpanded = false }
                     ) {
-                        tags.forEach { tag ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Checkbox(
-                                            checked = selectedTags.contains(tag),
-                                            onCheckedChange = { isChecked ->
-                                                selectedTags = if (isChecked) {
-                                                    selectedTags + tag
-                                                } else {
+                        // 2. Use the tagsNameState to populate the dropdown
+                        when (val state = tagsNameState) {
+                            is Result.Loading -> {
+                                DropdownMenuItem(
+                                    text = { CircularProgressIndicator(Modifier.width(24.dp).height(24.dp)) },
+                                    onClick = {}
+                                )
+                            }
+                            is Result.Error -> {
+                                DropdownMenuItem(
+                                    text = { Text("Error loading tags") },
+                                    onClick = {}
+                                )
+                            }
+                            is Result.Success -> {
+                                // 3. Extract the tag names from the list of TagsModel
+                                val tagsList = state.data.map { it.tagName }
+                                tagsList.forEach { tag ->
+                                    if (tag.isNotEmpty()) { // Filter out empty strings
+                                        DropdownMenuItem(
+                                            text = {
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Checkbox(
+                                                        checked = selectedTags.contains(tag),
+                                                        onCheckedChange = { isChecked ->
+                                                            selectedTags = if (isChecked) {
+                                                                selectedTags + tag
+                                                            } else {
+                                                                selectedTags - tag
+                                                            }
+                                                        }
+                                                    )
+                                                    Text(text = tag, modifier = Modifier.padding(start = 8.dp))
+                                                }
+                                            },
+                                            onClick = {
+                                                selectedTags = if (selectedTags.contains(tag)) {
                                                     selectedTags - tag
+                                                } else {
+                                                    selectedTags + tag
                                                 }
                                             }
                                         )
-                                        Text(text = tag, modifier = Modifier.padding(start = 8.dp))
-                                    }
-                                },
-                                onClick = {
-                                    selectedTags = if (selectedTags.contains(tag)) {
-                                        selectedTags - tag
-                                    } else {
-                                        selectedTags + tag
                                     }
                                 }
-                            )
+                            }
                         }
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(

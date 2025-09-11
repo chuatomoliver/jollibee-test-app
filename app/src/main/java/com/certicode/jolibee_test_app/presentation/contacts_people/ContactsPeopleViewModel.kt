@@ -3,12 +3,16 @@ package com.certicode.jolibee_test_app.presentation.contacts_people
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.certicode.jolibee_test_app.Result
+import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
+import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
 import com.certicode.jolibee_test_app.domain.peopleUseCase.AddPeopleUseCase
 import com.certicode.jolibee_test_app.domain.peopleUseCase.DeletePeopleUseCase
 import com.certicode.jolibee_test_app.domain.peopleUseCase.EditPeopleUseCase
 import com.certicode.jolibee_test_app.domain.peopleUseCase.GetPeopleByIdUseCase
 import com.certicode.jolibee_test_app.domain.peopleUseCase.GetPeopleUseCase
+import com.certicode.jolibee_test_app.domain.peopleUseCase.GetBusinessNameUseCase
+import com.certicode.jolibee_test_app.domain.peopleUseCase.GetTagsNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +26,9 @@ class ContactsPeopleViewModel @Inject constructor(
     private val deletePeopleUseCase: DeletePeopleUseCase,
     private val editPeopleUseCase: EditPeopleUseCase,
     private val getPeopleUseCase: GetPeopleUseCase,
-    private val getPeopleByIdUseCase: GetPeopleByIdUseCase // Inject the new use case
+    private val getPeopleByIdUseCase: GetPeopleByIdUseCase,
+    private val getBusinessNameUseCase: GetBusinessNameUseCase,
+    private val getTagsNameUseCase: GetTagsNameUseCase // 1. Inject the new use case
 ) : ViewModel() {
 
     // The mutable state flow that holds the current UI state.
@@ -30,13 +36,20 @@ class ContactsPeopleViewModel @Inject constructor(
     // The public, read-only state flow that UI components can observe.
     val uiState: StateFlow<PeopleUiState> = _uiState.asStateFlow()
 
-    init {
-        // Fetch the initial list of people when the ViewModel is created.
-        getPeople()
-    }
+    // New state flow for business names
+    private val _businessNameState = MutableStateFlow<Result<List<BusinessModel>>>(Result.Loading)
+    val businessNameState: StateFlow<Result<List<BusinessModel>>> = _businessNameState.asStateFlow()
 
-    // Existing functions (getPeople, addPerson, deletePerson, editPerson, resetPersonAddedState)
-    // remain the same.
+    // 2. New state flow for tags
+    private val _tagsNameState = MutableStateFlow<Result<List<TagsModel>>>(Result.Loading)
+    val tagsNameState: StateFlow<Result<List<TagsModel>>> = _tagsNameState.asStateFlow()
+
+    init {
+        // Fetch the initial list of people and business names when the ViewModel is created.
+        getPeople()
+        getBusinessNames()
+        getTagsName()
+    }
 
     /**
      * Fetches the list of all people from the repository and updates the UI state.
@@ -51,6 +64,30 @@ class ContactsPeopleViewModel @Inject constructor(
                         result.exception.message ?: "Unknown error"
                     )
                 }
+            }
+        }
+    }
+
+    /**
+     * Fetches the list of all business names from the use case and updates the business name state.
+     */
+    fun getBusinessNames() {
+        viewModelScope.launch {
+            // 3. Call the use case and update the state flow
+            getBusinessNameUseCase().collect { result ->
+                _businessNameState.value = result
+            }
+        }
+    }
+
+    /**
+     * Fetches the list of all tag names from the use case and updates the tag name state.
+     */
+    fun getTagsName() {
+        viewModelScope.launch {
+            // 4. Call the use case and update the state flow
+            getTagsNameUseCase().collect { result ->
+                _tagsNameState.value = result
             }
         }
     }
