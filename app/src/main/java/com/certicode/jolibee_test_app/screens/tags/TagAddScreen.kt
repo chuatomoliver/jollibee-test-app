@@ -1,8 +1,11 @@
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
 import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,8 +46,24 @@ fun TagAddScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* TODO: Implement save tag logic */ }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Tag")
+            FloatingActionButton(
+                // The onClick lambda now contains the logic to add a new tag.
+                onClick = {
+                    if (tagName.isNotBlank()) {
+                        val newTag = TagsModel(tagName = tagName)
+                        viewModel.addTag(newTag)
+                        navController.popBackStack()
+                    }
+                }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Tag")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Add Tag")
+                }
             }
         },
         content = { innerPadding ->

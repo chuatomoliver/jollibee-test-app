@@ -40,11 +40,6 @@ fun TagScreen(
     val uiState by viewModel.tagsState.collectAsState()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Tags") }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate("tag_add_screen") }) {
                 Icon(Icons.Default.Add, contentDescription = "Add Tag")
@@ -56,7 +51,7 @@ fun TagScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopStart
         ) {
             when (uiState) {
                 is TagUiState.Loading -> {
