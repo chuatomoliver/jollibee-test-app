@@ -82,6 +82,8 @@ fun ContactListUpdatePeopleScreen(
                 phone = person.phone
                 selectedBusiness = person.business
                 selectedTags = person.tags.split(",").map { it.trim() }.toSet()
+
+
             }
             is PeopleUiState.ContactPeopleUpdated -> { // Corrected this line
                 Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()

@@ -73,7 +73,7 @@ fun ContactPeopleAddScreen(
         when (uiState) {
             is PeopleUiState.ContactPeopleAdded -> {
                 // Show a toast for a successful addition
-                Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
+
 
                 // Reset the local state variables
                 name = ""
@@ -82,8 +82,9 @@ fun ContactPeopleAddScreen(
                 selectedBusiness = "No Business"
                 selectedTags = emptySet()
 
+                Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
                 // Navigate back
-                navController.popBackStack()
+//                navController.popBackStack()
 
                 // Reset the ViewModel's state to prevent the toast from showing again
                 viewModel.resetPersonAddedState()

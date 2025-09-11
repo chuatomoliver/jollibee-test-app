@@ -14,10 +14,6 @@ data class CategoryModel(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
-    // The business ID associated with the category.
-    @ColumnInfo(name = "people_id")
-    val peopleId: Long,
-
     // The name of the category.
     @ColumnInfo(name = "category_name")
     val categoryName: String

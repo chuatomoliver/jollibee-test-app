@@ -14,10 +14,6 @@ data class TagsModel(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
-    // The business ID associated with the tag.
-    @ColumnInfo(name = "business_id")
-    val businessId: Long,
-
     // The name of the tag.
     @ColumnInfo(name = "tag_name")
     val tagName: String
