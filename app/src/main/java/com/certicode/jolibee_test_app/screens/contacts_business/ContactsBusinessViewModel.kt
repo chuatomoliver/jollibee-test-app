@@ -47,6 +47,13 @@ class ContactsBusinessViewModel @Inject constructor(
         }
     }
 
+    fun resetBusinessUpdatedState() {
+        // Set the state back to a neutral state, such as Loading or Success.
+        // This prevents the LaunchedEffect in the UI from continuously observing
+        // a "business updated" state and re-running the side effect.
+        _uiState.value = BusinessUiState.Success(emptyList())
+    }
+
     fun addBusiness(business: BusinessModel) {
         viewModelScope.launch {
             _uiState.value = BusinessUiState.Loading

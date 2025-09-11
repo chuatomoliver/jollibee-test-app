@@ -18,6 +18,7 @@ import com.certicode.jolibee_test_app.screens.HomeScreen
 import com.certicode.jolibee_test_app.screens.LoginScreen
 import com.certicode.jolibee_test_app.screens.contacts_business.ContactBusinessAddScreen
 import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusinessScreen
+import com.certicode.jolibee_test_app.screens.contacts_business.ContactListUpdateBusinessScreen
 import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
 import com.certicode.jolibee_test_app.screens.contacts_people.ContactListUpdatePeopleScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskAddScreen
@@ -66,6 +67,7 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.ContactAddBusiness.route) {
                             ContactBusinessAddScreen(navController)
                         }
+                        // people update screen
                         composable(
                             route = "contact_update_people_screen/{personId}",
                             arguments = listOf(navArgument("personId") { type = NavType.StringType })
@@ -74,6 +76,28 @@ class MainActivity : ComponentActivity() {
                             ContactListUpdatePeopleScreen(
                                 navController = navController,
                                 personId = personId
+                            )
+                        }
+
+                        composable(
+                            route = "contact_update_people_screen/{personId}",
+                            arguments = listOf(navArgument("personId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val personId = backStackEntry.arguments?.getString("personId") ?: ""
+                            ContactListUpdatePeopleScreen(
+                                navController = navController,
+                                personId = personId
+                            )
+                        }
+
+                        composable(
+                            route = "contact_edit_business_screen/{businessId}",
+                            arguments = listOf(navArgument("businessId") { type = NavType.LongType })
+                        ) { backStackEntry ->
+                            val businessId = backStackEntry.arguments?.getLong("businessId") ?: 0L
+                            ContactListUpdateBusinessScreen(
+                                navController = navController,
+                                businessId = businessId
                             )
                         }
                     }
