@@ -63,27 +63,6 @@ fun ContactListPeopleScreen(
         }
     }
 
-//    LaunchedEffect(uiState) {
-//        val message = when (uiState) {
-//            is PeopleUiState.ContactPeopleAdded -> "Successfully Added"
-//            is PeopleUiState.ContactPeopleUpdated -> "Successfully Updated"
-//            is PeopleUiState.ContactPeopleDeleted -> "Successfully Deleted"
-//            is PeopleUiState.Error -> null // Handle error separately
-//            else -> null // Handle other states
-//        }
-//
-//        if (message != null) {
-//            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-//            viewModel.resetPersonAddedState() // Resets the state to prevent re-triggering
-//            navController.popBackStack() // Navigates back after the operation
-//        } else if (uiState is PeopleUiState.Error) {
-//            Toast.makeText(context, (uiState as PeopleUiState.Error).message, Toast.LENGTH_LONG).show()
-//        }
-//    }
-
-
-
-
     Scaffold(
         floatingActionButton = {
             Column(

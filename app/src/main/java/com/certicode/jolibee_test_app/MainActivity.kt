@@ -1,5 +1,6 @@
 package com.certicode.jolibee_test_app
 
+import TagAddScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,7 @@ import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusin
 import com.certicode.jolibee_test_app.screens.contacts_business.ContactListUpdateBusinessScreen
 import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
 import com.certicode.jolibee_test_app.screens.contacts_people.ContactListUpdatePeopleScreen
+import com.certicode.jolibee_test_app.screens.tags.TagScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskAddScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
 import com.certicode.jolibee_test_app.ui.theme.QuoteAppTheme
@@ -79,16 +81,6 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(
-                            route = "contact_update_people_screen/{personId}",
-                            arguments = listOf(navArgument("personId") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            val personId = backStackEntry.arguments?.getString("personId") ?: ""
-                            ContactListUpdatePeopleScreen(
-                                navController = navController,
-                                personId = personId
-                            )
-                        }
 
                         composable(
                             route = "contact_edit_business_screen/{businessId}",
@@ -100,6 +92,16 @@ class MainActivity : ComponentActivity() {
                                 businessId = businessId
                             )
                         }
+
+                        composable(Screen.TagList.route) {
+                            TagScreen(navController)
+                        }
+
+                        composable(Screen.TagAdd.route) {
+                            TagAddScreen(navController)
+                        }
+
+
                     }
                 }
             }

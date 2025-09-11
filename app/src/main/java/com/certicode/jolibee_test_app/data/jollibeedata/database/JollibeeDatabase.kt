@@ -17,7 +17,7 @@ import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskDao
 import com.certicode.jolibee_test_app.data.jollibeedata.tasks.TaskModel
 
 @Database(entities = [Quote::class, BusinessModel::class, PeopleModel::class, TagsModel::class, TaskModel::class, CategoryModel::class], version = 1, exportSchema = false)
-abstract class QuoteDatabase : RoomDatabase() {
+abstract class JollibeeDatabase : RoomDatabase() {
     abstract fun quoteDao(): QuoteDao
     abstract fun businessDao(): BusinessDao
     abstract fun categoryDao(): CategoryDao

@@ -10,10 +10,12 @@ sealed class Screen(val route: String) {
     object ContactListPeople : Screen("contact_list_people_screen")
     object ContactListBusiness : Screen("contact_list_business_screen")
     object ContactAddPeople : Screen("contact_add_people_screen")
+
     object ContactUpdatePeople : Screen("contact_update_people_screen")
     object ContactAddBusiness : Screen("contact_add_business_screen")
 
-
+    object TagList : Screen("tag_list_screen")
+    object TagAdd : Screen("tag_add_screen")
 
     // test screen
     object quoteScreen : Screen("quote_screen")

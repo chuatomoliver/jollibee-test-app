@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import com.certicode.jolibee_test_app.screens.contacts_business.ContactListBusinessScreen
 import com.certicode.jolibee_test_app.screens.contacts_people.ContactListPeopleScreen
+import com.certicode.jolibee_test_app.screens.tags.TagScreen
 import com.certicode.jolibee_test_app.screens.tasks.TaskListScreen
 import com.certicode.jollibee_test_app.screens.TaskCard
 
@@ -140,7 +141,7 @@ fun HomeScreen(navController: NavController) {
                         is HomeScreen.Completed -> TaskListScreen(navController, listType = "complete")
                         is HomeScreen.ContactsPeople -> ContactListPeopleScreen(navController)
                         is HomeScreen.ContactsBusiness -> ContactListBusinessScreen(navController)
-                        is HomeScreen.Tags -> TaskCard(navController)
+                        is HomeScreen.Tags -> TagScreen(navController)
                         is HomeScreen.Categories -> ContactListPeopleScreen(navController)
                     }
                 }
