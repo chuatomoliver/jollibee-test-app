@@ -19,12 +19,14 @@ import com.certicode.jolibee_test_app.presentation.HomeScreen
 import com.certicode.jolibee_test_app.presentation.LoginScreen
 import com.certicode.jolibee_test_app.presentation.category.CategoryAddScreen
 import com.certicode.jolibee_test_app.presentation.category.CategoryScreen
+import com.certicode.jolibee_test_app.presentation.category.CategoryUpdateScreen
 import com.certicode.jolibee_test_app.presentation.contacts_business.ContactBusinessAddScreen
 import com.certicode.jolibee_test_app.presentation.contacts_business.ContactListBusinessScreen
 import com.certicode.jolibee_test_app.presentation.contacts_business.ContactListUpdateBusinessScreen
 import com.certicode.jolibee_test_app.presentation.contacts_people.ContactListPeopleScreen
 import com.certicode.jolibee_test_app.presentation.contacts_people.ContactListUpdatePeopleScreen
 import com.certicode.jolibee_test_app.presentation.tags.TagScreen
+import com.certicode.jolibee_test_app.presentation.tags.TagUpdateScreen
 import com.certicode.jolibee_test_app.presentation.tasks.TaskAddScreen
 import com.certicode.jolibee_test_app.presentation.tasks.TaskListScreen
 import com.certicode.jolibee_test_app.ui.theme.QuoteAppTheme
@@ -101,6 +103,28 @@ class MainActivity : ComponentActivity() {
 
                         composable(Screen.TagAdd.route) {
                             TagAddScreen(navController)
+                        }
+                        // Tag update screen
+                        composable(
+                            route = "tag_update_screen/{tagId}",
+                            arguments = listOf(navArgument("tagId") { type = NavType.LongType })
+                        ) { backStackEntry ->
+                            val tagId = backStackEntry.arguments?.getLong("tagId") ?: 0L
+                            TagUpdateScreen(
+                                navController = navController,
+                                tagId = tagId
+                            )
+                        }
+
+                        composable(
+                            route = "category_update_screen/{CategoryId}",
+                            arguments = listOf(navArgument("CategoryId") { type = NavType.LongType })
+                        ) { backStackEntry ->
+                            val categoryId = backStackEntry.arguments?.getLong("CategoryId") ?: 0L
+                            CategoryUpdateScreen(
+                                navController = navController,
+                                categoryId = categoryId
+                            )
                         }
 
                         composable(Screen.CategoryList.route) {

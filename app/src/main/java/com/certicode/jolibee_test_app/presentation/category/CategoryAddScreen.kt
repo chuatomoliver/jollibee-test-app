@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryModel
+import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryViewModel
 
 /**
  * Composable function for the Category Add screen.

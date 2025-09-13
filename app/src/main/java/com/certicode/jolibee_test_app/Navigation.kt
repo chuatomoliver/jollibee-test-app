@@ -15,9 +15,12 @@ sealed class Screen(val route: String) {
     object ContactAddBusiness : Screen("contact_add_business_screen")
 
     object TagList : Screen("tag_list_screen")
+    object TagUpdateScreen : Screen("tag_update_screen")
     object TagAdd : Screen("tag_add_screen")
 
     object CategoryList : Screen("category_list_screen")
+
+    object CategoryUpdateScreen : Screen("category_update_screen")
     object CategoryAdd : Screen("category_add_screen")
 
     // test screen
