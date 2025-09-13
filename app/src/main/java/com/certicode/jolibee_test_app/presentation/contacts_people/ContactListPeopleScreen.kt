@@ -145,7 +145,6 @@ fun ContactListPeopleScreen(
                 PeopleUiState.ContactPeopleDeleted -> TODO()
                 PeopleUiState.ContactPeopleUpdated -> TODO()
                 is PeopleUiState.PersonLoaded -> TODO()
-                PeopleUiState.Idle -> TODO()
             }
         }
     }

@@ -7,8 +7,7 @@ sealed interface PeopleUiState {
     data class Success(val people: List<PeopleModel>) : PeopleUiState
     data class PersonLoaded(val person: PeopleModel) : PeopleUiState // New state for a single person
     data class Error(val message: String) : PeopleUiState
-    object Idle : PeopleUiState
-    object ContactPeopleUpdated : PeopleUiState
     object ContactPeopleAdded : PeopleUiState
+    object ContactPeopleUpdated : PeopleUiState
     object ContactPeopleDeleted : PeopleUiState
 }
