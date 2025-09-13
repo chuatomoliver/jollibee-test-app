@@ -28,7 +28,7 @@ class ContactsPeopleViewModel @Inject constructor(
     private val getPeopleUseCase: GetPeopleUseCase,
     private val getPeopleByIdUseCase: GetPeopleByIdUseCase,
     private val getBusinessNameUseCase: GetBusinessNameUseCase,
-    private val getTagsNameUseCase: GetTagsNameUseCase // 1. Inject the new use case
+    private val getTagsNameUseCase: GetTagsNameUseCase
 ) : ViewModel() {
 
     // The mutable state flow that holds the current UI state.
@@ -40,7 +40,7 @@ class ContactsPeopleViewModel @Inject constructor(
     private val _businessNameState = MutableStateFlow<Result<List<BusinessModel>>>(Result.Loading)
     val businessNameState: StateFlow<Result<List<BusinessModel>>> = _businessNameState.asStateFlow()
 
-    // 2. New state flow for tags
+    // New state flow for tags
     private val _tagsNameState = MutableStateFlow<Result<List<TagsModel>>>(Result.Loading)
     val tagsNameState: StateFlow<Result<List<TagsModel>>> = _tagsNameState.asStateFlow()
 
@@ -54,6 +54,10 @@ class ContactsPeopleViewModel @Inject constructor(
     /**
      * Fetches the list of all people from the repository and updates the UI state.
      */
+
+   fun resetPersonAddedState(){
+        getPeople()
+   }
     fun getPeople() {
         viewModelScope.launch {
             getPeopleUseCase().collect { result ->
@@ -73,7 +77,6 @@ class ContactsPeopleViewModel @Inject constructor(
      */
     fun getBusinessNames() {
         viewModelScope.launch {
-            // 3. Call the use case and update the state flow
             getBusinessNameUseCase().collect { result ->
                 _businessNameState.value = result
             }
@@ -85,7 +88,6 @@ class ContactsPeopleViewModel @Inject constructor(
      */
     fun getTagsName() {
         viewModelScope.launch {
-            // 4. Call the use case and update the state flow
             getTagsNameUseCase().collect { result ->
                 _tagsNameState.value = result
             }
@@ -135,6 +137,7 @@ class ContactsPeopleViewModel @Inject constructor(
      */
     fun editPerson(person: PeopleModel) {
         viewModelScope.launch {
+            _uiState.value = PeopleUiState.Loading
             when (val result = editPeopleUseCase(person)) {
                 is Result.Success -> {
                     // Update state to indicate the person was successfully edited.
@@ -148,13 +151,12 @@ class ContactsPeopleViewModel @Inject constructor(
     }
 
     /**
-     * Resets the state after a person has been added, triggering a UI refresh.
+     * Resets the UI state to a neutral state, clearing any previous one-time events.
      */
-    fun resetPersonAddedState() {
-        getPeople()
+    fun resetUiState() {
+        _uiState.value = PeopleUiState.Loading
     }
 
-    // New function to fetch a person by ID
     /**
      * Fetches a person by their unique ID.
      * @param personId The ID of the person to fetch.
