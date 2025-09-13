@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.presentation
+package com.certicode.jolibee_test_app.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,22 +29,14 @@ import com.certicode.jolibee_test_app.presentation.tags.TagScreen
 import com.certicode.jolibee_test_app.presentation.tasks.TaskListScreen
 
 // Sealed class to represent different screens
-sealed class HomeScreen(val title: String) {
-    object TaskList : HomeScreen("Task List")
-    object Completed : HomeScreen("Completed")
-    object ContactsPeople : HomeScreen("Contacts-People")
-    object ContactsBusiness : HomeScreen("Contacts-Business")
-    object Tags : HomeScreen("Tags")
-    object Categories : HomeScreen("Categories")
 
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     // State to track the currently selected tab
-    val screens = listOf(HomeScreen.TaskList, HomeScreen.Completed, HomeScreen.ContactsPeople,HomeScreen.ContactsBusiness, HomeScreen.Tags, HomeScreen.Categories)
-    var selectedScreen by remember { mutableStateOf<HomeScreen>(HomeScreen.TaskList) }
+    val screens = listOf(HomeScreenItems.TaskList, HomeScreenItems.Completed, HomeScreenItems.ContactsPeople,HomeScreenItems.ContactsBusiness, HomeScreenItems.Tags, HomeScreenItems.Categories)
+    var selectedScreen by remember { mutableStateOf<HomeScreenItems>(HomeScreenItems.TaskList) }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -59,20 +51,18 @@ fun HomeScreen(navController: NavController) {
                 HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
                 // Drawer items
                 NavigationDrawerItem(
-                    label = { Text("Profile") },
-                    selected = false,
-                    onClick = {
-                        // Handle navigation to profile screen
-                        scope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-                NavigationDrawerItem(
                     label = { Text("Sign Out") },
                     selected = false,
                     onClick = {
-                        // Handle sign out logic
-                        scope.launch { drawerState.close() }
+                        scope.launch {
+                            drawerState.close()
+                            navController.navigate("login_screen") {
+                                // This is crucial for a smooth user experience.
+                                // It clears the back stack up to the 'home' destination,
+                                // so the user can't navigate back to the app after logging out.
+                                popUpTo("home") { inclusive = true }
+                            }
+                        }
                     },
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
@@ -137,12 +127,12 @@ fun HomeScreen(navController: NavController) {
 
                     // Content based on the selected screen
                     when (selectedScreen) {
-                        is HomeScreen.TaskList -> TaskListScreen(navController, listType = "open")
-                        is HomeScreen.Completed -> TaskListScreen(navController, listType = "complete")
-                        is HomeScreen.ContactsPeople -> ContactListPeopleScreen(navController)
-                        is HomeScreen.ContactsBusiness -> ContactListBusinessScreen(navController)
-                        is HomeScreen.Tags -> TagScreen(navController)
-                        is HomeScreen.Categories -> CategoryScreen(navController)
+                        is HomeScreenItems.TaskList -> TaskListScreen(navController, listType = "open")
+                        is HomeScreenItems.Completed -> TaskListScreen(navController, listType = "complete")
+                        is HomeScreenItems.ContactsPeople -> ContactListPeopleScreen(navController)
+                        is HomeScreenItems.ContactsBusiness -> ContactListBusinessScreen(navController)
+                        is HomeScreenItems.Tags -> TagScreen(navController)
+                        is HomeScreenItems.Categories -> CategoryScreen(navController)
                     }
                 }
             }
