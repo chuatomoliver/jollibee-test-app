@@ -10,4 +10,5 @@ sealed interface PeopleUiState {
     object ContactPeopleAdded : PeopleUiState
     object ContactPeopleUpdated : PeopleUiState
     object ContactPeopleDeleted : PeopleUiState
+    object Idle : PeopleUiState
 }

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.certicode.jolibee_test_app.R
+import com.certicode.jolibee_test_app.Result
 import com.certicode.jolibee_test_app.data.jollibeedata.people.PeopleModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,10 +61,11 @@ fun ContactListUpdatePeopleScreen(
     var businessExpanded by remember { mutableStateOf(false) }
     var selectedBusiness by remember { mutableStateOf("No Business") }
     var tagsExpanded by remember { mutableStateOf(false) }
-    val tags = listOf("Popular", "New Market", "aaaa", "bbbb", "Trending")
     var selectedTags by remember { mutableStateOf(setOf<String>()) }
 
     val uiState by viewModel.uiState.collectAsState()
+    val businessNameState by viewModel.businessNameState.collectAsState()
+    val tagsNameState by viewModel.tagsNameState.collectAsState() // Corrected: Added missing variable declaration.
     val context = LocalContext.current
 
     val personIdAsLong = personId.toLongOrNull()
@@ -70,6 +73,8 @@ fun ContactListUpdatePeopleScreen(
     LaunchedEffect(personIdAsLong) {
         if (personIdAsLong != null) {
             viewModel.getPersonById(personIdAsLong)
+            viewModel.getBusinessNames()
+            viewModel.getTagsName() // Corrected: Added missing function call.
         }
     }
 
@@ -81,11 +86,9 @@ fun ContactListUpdatePeopleScreen(
                 email = person.email
                 phone = person.phone
                 selectedBusiness = person.business
-                selectedTags = person.tags.split(",").map { it.trim() }.toSet()
-
-
+                selectedTags = person.tags.split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
             }
-            is PeopleUiState.ContactPeopleUpdated -> { // Corrected this line
+            is PeopleUiState.ContactPeopleUpdated -> {
                 Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
                 navController.popBackStack()
                 viewModel.resetPersonAddedState()
@@ -107,14 +110,14 @@ fun ContactListUpdatePeopleScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.Black
+                            tint = colorResource(id = R.color.black)
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colorResource(id = R.color.white),
                     titleContentColor = colorResource(id = R.color.black),
-                    navigationIconContentColor = colorResource(id = R.color.white)
+                    navigationIconContentColor = colorResource(id = R.color.black)
                 )
             )
         }
@@ -171,21 +174,36 @@ fun ContactListUpdatePeopleScreen(
                         onDismissRequest = { businessExpanded = false },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        listOf("No Business", "Jollibee Foods Corp", "Red Ribbon", "aaaa", "Mang Inasal").forEach { business ->
-                            Text(
-                                text = business,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        selectedBusiness = business
-                                        businessExpanded = false
-                                    }
-                                    .padding(16.dp)
-                            )
+                        when (val state = businessNameState) {
+                            is com.certicode.jolibee_test_app.Result.Loading -> {
+                                DropdownMenuItem(
+                                    text = { CircularProgressIndicator(Modifier.width(24.dp).height(24.dp)) },
+                                    onClick = {}
+                                )
+                            }
+                            is com.certicode.jolibee_test_app.Result.Error -> {
+                                DropdownMenuItem(
+                                    text = { Text("Error loading businesses") },
+                                    onClick = {}
+                                )
+                            }
+                            is Result.Success -> {
+                                val businessNames = listOf("No Business") + state.data.map { it.businessName }
+                                businessNames.forEach { business ->
+                                    DropdownMenuItem(
+                                        text = { Text(business) },
+                                        onClick = {
+                                            selectedBusiness = business
+                                            businessExpanded = false
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
+            // Tags Dropdown
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -209,31 +227,50 @@ fun ContactListUpdatePeopleScreen(
                         expanded = tagsExpanded,
                         onDismissRequest = { tagsExpanded = false }
                     ) {
-                        tags.forEach { tag ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Checkbox(
-                                            checked = selectedTags.contains(tag),
-                                            onCheckedChange = { isChecked ->
-                                                selectedTags = if (isChecked) {
-                                                    selectedTags + tag
-                                                } else {
+                        when (val state = tagsNameState) {
+                            is Result.Loading -> {
+                                DropdownMenuItem(
+                                    text = { CircularProgressIndicator(Modifier.width(24.dp).height(24.dp)) },
+                                    onClick = {}
+                                )
+                            }
+                            is Result.Error -> {
+                                DropdownMenuItem(
+                                    text = { Text("Error loading tags") },
+                                    onClick = {}
+                                )
+                            }
+                            is Result.Success -> {
+                                val tagsList = state.data.map { it.tagName }
+                                tagsList.forEach { tag ->
+                                    if (tag.isNotEmpty()) {
+                                        DropdownMenuItem(
+                                            text = {
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Checkbox(
+                                                        checked = selectedTags.contains(tag),
+                                                        onCheckedChange = { isChecked ->
+                                                            selectedTags = if (isChecked) {
+                                                                selectedTags + tag
+                                                            } else {
+                                                                selectedTags - tag
+                                                            }
+                                                        }
+                                                    )
+                                                    Text(text = tag, modifier = Modifier.padding(start = 8.dp))
+                                                }
+                                            },
+                                            onClick = {
+                                                selectedTags = if (selectedTags.contains(tag)) {
                                                     selectedTags - tag
+                                                } else {
+                                                    selectedTags + tag
                                                 }
                                             }
                                         )
-                                        Text(text = tag, modifier = Modifier.padding(start = 8.dp))
-                                    }
-                                },
-                                onClick = {
-                                    selectedTags = if (selectedTags.contains(tag)) {
-                                        selectedTags - tag
-                                    } else {
-                                        selectedTags + tag
                                     }
                                 }
-                            )
+                            }
                         }
                     }
                 }
