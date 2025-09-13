@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -33,17 +34,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
+import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryModel
+import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,20 +54,20 @@ fun ContactListUpdateBusinessScreen(
     businessId: Long,
     viewModel: ContactsBusinessViewModel = hiltViewModel()
 ) {
+    // Collecting all three state flows from the ViewModel
     val uiState by viewModel.uiState.collectAsState()
+    val categoriesUiState by viewModel.categoriesUiState.collectAsState()
+    val tagsUiState by viewModel.tagsUiState.collectAsState()
+
     val context = LocalContext.current
 
+    // State variables for text fields and dropdown selections
     var businessName by remember { mutableStateOf("") }
     var contactEmail by remember { mutableStateOf("") }
-
-    val availableTags = listOf("Popular", "Market", "aaaa", "bbbb", "Trending")
     var tagsExpanded by remember { mutableStateOf(false) }
     var selectedTags by remember { mutableStateOf(emptySet<String>()) }
-
-    // Removed unused availableCategories variable
     var categoryExpanded by remember { mutableStateOf(false) }
-    // Changed to a set of strings, not a single string
-    var selectedCategory by remember { mutableStateOf(emptySet<String>()) }
+    var selectedCategories by remember { mutableStateOf(emptySet<String>()) }
 
     LaunchedEffect(key1 = businessId) {
         viewModel.getBusinessById(businessId)
@@ -77,14 +79,10 @@ fun ContactListUpdateBusinessScreen(
                 businessName = currentState.business.businessName
                 contactEmail = currentState.business.email
                 selectedTags = currentState.business.tags.split(",").map { it.trim() }.toSet()
-                // Split categories from the loaded business and set to selectedCategory
-                selectedCategory = currentState.business.categories.split(",").map { it.trim() }.toSet()
+                selectedCategories = currentState.business.categories.split(",").map { it.trim() }.toSet()
             }
             is BusinessUiState.ContactBusinessUpdated -> {
                 Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
-                viewModel.getBusinesses()
-                navController.popBackStack()
-
                 viewModel.resetBusinessUpdatedState()
             }
             is BusinessUiState.Error -> {
@@ -97,7 +95,7 @@ fun ContactListUpdateBusinessScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Update Business") }, // Changed title to reflect the update function
+                title = { Text(text = "Update Business") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -115,45 +113,51 @@ fun ContactListUpdateBusinessScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 24.dp, vertical = 8.dp)
-                // Added a vertical scroll modifier to handle long content
-                .verticalScroll(rememberScrollState())
-        ) {
-            OutlinedTextField(
-                value = businessName,
-                onValueChange = { businessName = it },
-                label = { Text("Business Name") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = contactEmail,
-                onValueChange = { contactEmail = it },
-                label = { Text("Contact Email") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Categories Dropdown Menu
+        // Show loading indicator when the main business data is loading
+        if (uiState is BusinessUiState.Loading || categoriesUiState is CategoryUiState.Loading || tagsUiState is TagsUiState.Loading) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                OutlinedTextField(
+                    value = businessName,
+                    onValueChange = { businessName = it },
+                    label = { Text("Business Name") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = contactEmail,
+                    onValueChange = { contactEmail = it },
+                    label = { Text("Contact Email") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Categories Dropdown Menu
                 ExposedDropdownMenuBox(
                     expanded = categoryExpanded,
                     onExpandedChange = { categoryExpanded = !categoryExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    val labelText = if (selectedCategories.isEmpty()) "Select Categories" else selectedCategories.joinToString(", ")
                     OutlinedTextField(
                         readOnly = true,
-                        // Corrected variable name from selectedCategories to selectedCategory
-                        value = if (selectedCategory.isEmpty()) "Select Categories" else selectedCategory.joinToString(", "),
+                        value = labelText,
                         onValueChange = {},
                         label = { Text("Categories") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(categoryExpanded) },
@@ -165,51 +169,48 @@ fun ContactListUpdateBusinessScreen(
                         expanded = categoryExpanded,
                         onDismissRequest = { categoryExpanded = false }
                     ) {
-                        // Using a hardcoded list for demonstration, this should likely be from a ViewModel
-                        listOf("RCG", "Cat 1", "Cat 2", "aaaa","bbbb").forEach { category ->
-                            DropdownMenuItem(
-                                text = { Text(text = category) },
-                                onClick = {
-                                    // Corrected variable name from selectedCategories to selectedCategory
-                                    selectedCategory = if (selectedCategory.contains(category)) {
-                                        selectedCategory - category
-                                    } else {
-                                        selectedCategory + category
-                                    }
-                                },
-                                leadingIcon = {
-                                    Checkbox(
-                                        checked = selectedCategory.contains(category),
-                                        onCheckedChange = { isChecked ->
-                                            // Corrected variable name from selectedCategories to selectedCategory
-                                            selectedCategory = if (isChecked) {
-                                                selectedCategory + category
-                                            } else {
-                                                selectedCategory - category
-                                            }
+                        if (categoriesUiState is CategoryUiState.Success) {
+                            val categories = (categoriesUiState as CategoryUiState.Success).categories
+                            categories.forEach { category ->
+                                DropdownMenuItem(
+                                    text = { Text(text = category.categoryName) },
+                                    onClick = {
+                                        selectedCategories = if (selectedCategories.contains(category.categoryName)) {
+                                            selectedCategories - category.categoryName
+                                        } else {
+                                            selectedCategories + category.categoryName
                                         }
-                                    )
-                                }
-                            )
+                                    },
+                                    leadingIcon = {
+                                        Checkbox(
+                                            checked = selectedCategories.contains(category.categoryName),
+                                            onCheckedChange = { isChecked ->
+                                                selectedCategories = if (isChecked) {
+                                                    selectedCategories + category.categoryName
+                                                } else {
+                                                    selectedCategories - category.categoryName
+                                                }
+                                            }
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // Tags Dropdown Menu
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                // Tags Dropdown Menu
                 ExposedDropdownMenuBox(
                     expanded = tagsExpanded,
                     onExpandedChange = { tagsExpanded = !tagsExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    val labelText = if (selectedTags.isEmpty()) "Select Tags" else selectedTags.joinToString(", ")
                     OutlinedTextField(
                         readOnly = true,
-                        value = if (selectedTags.isEmpty()) "Select Tags" else selectedTags.joinToString(", "),
+                        value = labelText,
                         onValueChange = {},
                         label = { Text("Tags") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(tagsExpanded) },
@@ -221,64 +222,57 @@ fun ContactListUpdateBusinessScreen(
                         expanded = tagsExpanded,
                         onDismissRequest = { tagsExpanded = false }
                     ) {
-                        // The 'tags' variable in the original code wasn't defined. Changed to use the 'availableTags'
-                        availableTags.forEach { tag ->
-                            DropdownMenuItem(
-                                text = { Text(text = tag) },
-                                onClick = {
-                                    selectedTags = if (selectedTags.contains(tag)) {
-                                        selectedTags - tag
-                                    } else {
-                                        selectedTags + tag
-                                    }
-                                },
-                                leadingIcon = {
-                                    Checkbox(
-                                        checked = selectedTags.contains(tag),
-                                        onCheckedChange = { isChecked ->
-                                            selectedTags = if (isChecked) {
-                                                selectedTags + tag
-                                            } else {
-                                                selectedTags - tag
-                                            }
+                        if (tagsUiState is TagsUiState.Success) {
+                            val tags = (tagsUiState as TagsUiState.Success).tags
+                            tags.forEach { tag ->
+                                DropdownMenuItem(
+                                    text = { Text(text = tag.tagName) },
+                                    onClick = {
+                                        selectedTags = if (selectedTags.contains(tag.tagName)) {
+                                            selectedTags - tag.tagName
+                                        } else {
+                                            selectedTags + tag.tagName
                                         }
-                                    )
-                                }
-                            )
+                                    },
+                                    leadingIcon = {
+                                        Checkbox(
+                                            checked = selectedTags.contains(tag.tagName),
+                                            onCheckedChange = { isChecked ->
+                                                selectedTags = if (isChecked) {
+                                                    selectedTags + tag.tagName
+                                                } else {
+                                                    selectedTags - tag.tagName
+                                                }
+                                            }
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-            // Update Business Button
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Button(onClick = {
-                    val updatedBusiness = BusinessModel(
-                        businessName = businessName,
-                        email = contactEmail,
-                        categories = selectedCategory.joinToString(separator = ","),
-                        tags = selectedTags.joinToString(separator = ","),
-                        id = businessId // The ID is required for the update operation
-                    )
-                    viewModel.editBusiness(updatedBusiness)
-                }) {
-                    Text("Update Business") // Changed button text
+                // Update Business Button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(onClick = {
+                        val updatedBusiness = BusinessModel(
+                            id = businessId,
+                            businessName = businessName,
+                            email = contactEmail,
+                            categories = selectedCategories.joinToString(separator = ","),
+                            tags = selectedTags.joinToString(separator = ",")
+                        )
+                        viewModel.editBusiness(updatedBusiness)
+                    }) {
+                        Text("Update Business")
+                    }
                 }
             }
         }
     }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun UpdateBusinessScreenPreview() {
-    val navController = rememberNavController()
-    // For preview, we can pass a dummy ID
-    // ContactListUpdateBusinessScreen(navController = navController, businessId = 1L)
 }

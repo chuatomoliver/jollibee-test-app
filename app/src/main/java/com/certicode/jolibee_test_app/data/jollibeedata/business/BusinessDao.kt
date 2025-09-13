@@ -6,6 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryModel
+import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -30,10 +32,16 @@ interface BusinessDao {
 
     // Retrieves all businesses from the database, ordered by business name.
     // Returns a Flow, which emits new data whenever the table changes.
-    @Query("SELECT * FROM businesses ORDER BY business_name ASC")
+    @Query("SELECT * FROM businesses ORDER BY id DESC")
     fun getAllBusinesses(): Flow<List<BusinessModel>>
 
     // Retrieves a single business by its ID.
     @Query("SELECT * FROM businesses WHERE id = :id")
     suspend fun getBusinessById(id: Long): BusinessModel?
+
+    @Query("SELECT * FROM categories ORDER BY id DESC")
+    fun getAllCategories(): Flow<List<CategoryModel>>
+
+    @Query("SELECT * FROM tags ORDER BY id DESC")
+    fun getTagsName(): Flow<List<TagsModel>>
 }

@@ -3,6 +3,8 @@ package com.certicode.jolibee_test_app.data.jollibeedata.repository
 import com.certicode.jolibee_test_app.Result
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessDao
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
+import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryModel
+import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -14,6 +16,18 @@ class BusinessRepository @Inject constructor(private val businessDao: BusinessDa
         try {
             businessDao.getAllBusinesses().collect { businesses ->
                 emit(Result.Success(businesses))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e))
+        }
+    }
+
+    // Corrected function to get all categories
+    fun getAllCategories(): Flow<Result<List<CategoryModel>>> = flow {
+        emit(Result.Loading)
+        try {
+            businessDao.getAllCategories().collect { categories ->
+                emit(Result.Success(categories))
             }
         } catch (e: Exception) {
             emit(Result.Error(e))
@@ -65,6 +79,20 @@ class BusinessRepository @Inject constructor(private val businessDao: BusinessDa
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
+        }
+    }
+
+    // New functions added below this line
+
+    // Fetches a list of all tags from the database
+    fun getTags(): Flow<Result<List<TagsModel>>> = flow {
+        emit(Result.Loading)
+        try {
+            businessDao.getTagsName().collect { tags ->
+                emit(Result.Success(tags))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e))
         }
     }
 }

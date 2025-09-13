@@ -40,6 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.certicode.jolibee_test_app.R
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
+import com.certicode.jolibee_test_app.data.jollibeedata.categories.CategoryModel
+import com.certicode.jolibee_test_app.data.jollibeedata.tags.TagsModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,39 +49,31 @@ fun ContactBusinessAddScreen(
     navController: NavController,
     viewModel: ContactsBusinessViewModel = hiltViewModel()
 ) {
-
+    // Collecting all three state flows from the ViewModel
     val uiState by viewModel.uiState.collectAsState()
+    val categoriesUiState by viewModel.categoriesUiState.collectAsState()
+    val tagsUiState by viewModel.tagsUiState.collectAsState()
+
     val context = LocalContext.current
 
-    // State variables for text fields
+    // State variables for text fields and dropdown selections
     var businessName by remember { mutableStateOf("") }
     var contactEmail by remember { mutableStateOf("") }
-
-    // State for the "Tags" dropdown
-    val tags = listOf("Popular", "Market", "aaaa", "bbbb","Trending")
     var tagsExpanded by remember { mutableStateOf(false) }
     var selectedTags by remember { mutableStateOf(emptySet<String>()) }
-
-    // State for the "Business" dropdown
     var categoryExpanded by remember { mutableStateOf(false) }
-    var selectedCategories by remember { mutableStateOf(emptySet<String>()) } // Corrected: Use a set for multi-selection
+    var selectedCategories by remember { mutableStateOf(emptySet<String>()) }
 
-    LaunchedEffect(uiState) {
-        // Your logic for LaunchedEffect
-    }
-
+    // Merged and corrected LaunchedEffect to handle business UI state
     LaunchedEffect(uiState) {
         when (uiState) {
             is BusinessUiState.ContactBusinessAdded -> {
                 // Show a toast for a successful addition
-                // Reset the local state variables
                 businessName = ""
                 contactEmail = ""
                 selectedCategories = emptySet()
                 selectedTags = emptySet()
 
-                // Navigate back
-//                navController.popBackStack()
                 Toast.makeText(context, "Business Added Successfully", Toast.LENGTH_SHORT).show()
                 // Reset the ViewModel's state to prevent the toast from showing again
                 viewModel.resetBusinessAddedState()
@@ -149,9 +143,16 @@ fun ContactBusinessAddScreen(
                     onExpandedChange = { categoryExpanded = !categoryExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    val labelText = when (categoriesUiState) {
+                        is CategoryUiState.Success -> {
+                            if (selectedCategories.isEmpty()) "Select Categories" else selectedCategories.joinToString(", ")
+                        }
+                        is CategoryUiState.Loading -> "Loading Categories..."
+                        is CategoryUiState.Error -> "Error loading categories"
+                    }
                     OutlinedTextField(
                         readOnly = true,
-                        value = if (selectedCategories.isEmpty()) "Select Categories" else selectedCategories.joinToString(", "),
+                        value = labelText,
                         onValueChange = {},
                         label = { Text("Categories") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(categoryExpanded) },
@@ -163,29 +164,33 @@ fun ContactBusinessAddScreen(
                         expanded = categoryExpanded,
                         onDismissRequest = { categoryExpanded = false }
                     ) {
-                        listOf("RCG", "Cat 1", "Cat 2", "aaaa","bbbb").forEach { category ->
-                            DropdownMenuItem(
-                                text = { Text(text = category) },
-                                onClick = {
-                                    selectedCategories = if (selectedCategories.contains(category)) {
-                                        selectedCategories - category
-                                    } else {
-                                        selectedCategories + category
-                                    }
-                                },
-                                leadingIcon = {
-                                    Checkbox(
-                                        checked = selectedCategories.contains(category),
-                                        onCheckedChange = { isChecked ->
-                                            selectedCategories = if (isChecked) {
-                                                selectedCategories + category
-                                            } else {
-                                                selectedCategories - category
-                                            }
+                        if (categoriesUiState is CategoryUiState.Success) {
+                            (categoriesUiState as CategoryUiState.Success).categories.forEach { category ->
+                                DropdownMenuItem(
+                                    text = { Text(text = category.categoryName) },
+                                    onClick = {
+                                        selectedCategories = if (selectedCategories.contains(category.categoryName)) {
+                                            selectedCategories - category.categoryName
+                                        } else {
+                                            selectedCategories + category.categoryName
                                         }
-                                    )
-                                }
-                            )
+                                    },
+                                    leadingIcon = {
+                                        Checkbox(
+                                            checked = selectedCategories.contains(category.categoryName),
+                                            onCheckedChange = { isChecked ->
+                                                selectedCategories = if (isChecked) {
+                                                    selectedCategories + category.categoryName
+                                                } else {
+                                                    selectedCategories - category.categoryName
+                                                }
+                                            }
+                                        )
+                                    },
+                                    // Use a single line for the menu item
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }
@@ -202,9 +207,16 @@ fun ContactBusinessAddScreen(
                     onExpandedChange = { tagsExpanded = !tagsExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    val labelText = when (tagsUiState) {
+                        is TagsUiState.Success -> {
+                            if (selectedTags.isEmpty()) "Select Tags" else selectedTags.joinToString(", ")
+                        }
+                        is TagsUiState.Loading -> "Loading Tags..."
+                        is TagsUiState.Error -> "Error loading tags"
+                    }
                     OutlinedTextField(
                         readOnly = true,
-                        value = if (selectedTags.isEmpty()) "Select Tags" else selectedTags.joinToString(", "),
+                        value = labelText,
                         onValueChange = {},
                         label = { Text("Tags") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(tagsExpanded) },
@@ -216,29 +228,32 @@ fun ContactBusinessAddScreen(
                         expanded = tagsExpanded,
                         onDismissRequest = { tagsExpanded = false }
                     ) {
-                        tags.forEach { tag ->
-                            DropdownMenuItem(
-                                text = { Text(text = tag) },
-                                onClick = {
-                                    selectedTags = if (selectedTags.contains(tag)) {
-                                        selectedTags - tag
-                                    } else {
-                                        selectedTags + tag
-                                    }
-                                },
-                                leadingIcon = {
-                                    Checkbox(
-                                        checked = selectedTags.contains(tag),
-                                        onCheckedChange = { isChecked ->
-                                            selectedTags = if (isChecked) {
-                                                selectedTags + tag
-                                            } else {
-                                                selectedTags - tag
-                                            }
+                        if (tagsUiState is TagsUiState.Success) {
+                            (tagsUiState as TagsUiState.Success).tags.forEach { tag ->
+                                DropdownMenuItem(
+                                    text = { Text(text = tag.tagName) },
+                                    onClick = {
+                                        selectedTags = if (selectedTags.contains(tag.tagName)) {
+                                            selectedTags - tag.tagName
+                                        } else {
+                                            selectedTags + tag.tagName
                                         }
-                                    )
-                                }
-                            )
+                                    },
+                                    leadingIcon = {
+                                        Checkbox(
+                                            checked = selectedTags.contains(tag.tagName),
+                                            onCheckedChange = { isChecked ->
+                                                selectedTags = if (isChecked) {
+                                                    selectedTags + tag.tagName
+                                                } else {
+                                                    selectedTags - tag.tagName
+                                                }
+                                            }
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }
@@ -255,7 +270,7 @@ fun ContactBusinessAddScreen(
                     val newBusiness = BusinessModel(
                         businessName = businessName,
                         email = contactEmail,
-                        categories = selectedCategories.joinToString(separator = ","), // Pass the list of selected categories
+                        categories = selectedCategories.joinToString(separator = ","),
                         tags = selectedTags.joinToString(separator = ",")
                     )
                     viewModel.addBusiness(newBusiness)

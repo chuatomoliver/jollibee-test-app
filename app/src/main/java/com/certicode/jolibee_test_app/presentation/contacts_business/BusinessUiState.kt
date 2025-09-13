@@ -1,6 +1,7 @@
 package com.certicode.jolibee_test_app.presentation.contacts_business
 
 import com.certicode.jolibee_test_app.data.jollibeedata.business.BusinessModel
+import com.certicode.jolibee_test_app.presentation.contacts_people.PeopleUiState
 
 interface BusinessUiState {
     object Loading : BusinessUiState
@@ -10,4 +11,5 @@ interface BusinessUiState {
     object ContactBusinessAdded : BusinessUiState
     object ContactBusinessUpdated : BusinessUiState
     object ContactBusinessDeleted : BusinessUiState
+    object Idle : BusinessUiState
 }
