@@ -1,5 +1,6 @@
 package com.certicode.jolibee_test_app
 
+import RegistrationScreen
 import TagAddScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -48,6 +49,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = Screen.Login.route) {
                         composable(Screen.Login.route) {
                             LoginScreen(navController)
+                        }
+                        composable(Screen.Registration.route) {
+                            RegistrationScreen(navController)
                         }
                         composable(Screen.Home.route) {
                             HomeScreen(navController)

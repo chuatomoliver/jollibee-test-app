@@ -4,6 +4,7 @@ package com.certicode.jolibee_test_app
 sealed class Screen(val route: String) {
     // Add other screens here
     object Login : Screen("login_screen")
+    object Registration : Screen("registration_screen")
     object Home : Screen("home_screen")
     object TaskList : Screen("task_list_screen")
     object TaskAdd : Screen("task_add_screen")

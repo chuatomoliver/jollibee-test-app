@@ -227,7 +227,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ){
-                        TextButton(onClick = { /* Handle Sign Up click */ }) {
+                        TextButton(onClick = { navController.navigate("registration_screen") }) {
                             Text(
                                 text = "Sign Up",
                                 color = Color(0xFF0066CC),
