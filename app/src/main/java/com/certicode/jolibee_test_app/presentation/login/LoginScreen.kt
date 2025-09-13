@@ -1,4 +1,4 @@
-package com.certicode.jolibee_test_app.presentation
+package com.certicode.jolibee_test_app.presentation.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,18 +44,30 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.certicode.jolibee_test_app.R
+import com.certicode.jolibee_test_app.data.jollibeedata.repository.AuthRepository
+import com.certicode.jolibee_test_app.network.RetrofitClient
+import com.certicode.jolibee_test_app.presentation.login.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    navController: NavController
+) {
+    val authService = RetrofitClient.apiService
+    val authRepository = AuthRepository(authService)
+    val authViewModel: AuthViewModel = viewModel(factory = LoginViewModelFactory(authRepository))
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
+    val loginState by authViewModel.loginState.collectAsState()
+
     Surface(
-        color = Color(0xFF003366), // Dark blue background for the entire screen
+        color = Color(0xFF003366),
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
@@ -77,7 +91,7 @@ fun LoginScreen(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.jbfcf), // Replace with your logo resource
+                        painter = painterResource(id = R.drawable.jbfcf),
                         contentDescription = "Jollibee Logo",
                         modifier = Modifier.size(120.dp)
                     )
@@ -111,7 +125,7 @@ fun LoginScreen(navController: NavController) {
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                 Icon(
-                                    painter = painterResource(id = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off), // Replace with your visibility icons
+                                    painter = painterResource(id = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
                                     contentDescription = "Toggle password visibility"
                                 )
                             }
@@ -126,7 +140,7 @@ fun LoginScreen(navController: NavController) {
                         TextButton(onClick = { /* Handle Forgot Password click */ }) {
                             Text(
                                 text = "Forgot Password?",
-                                color = Color(0xFF0066CC), // Blue link color
+                                color = Color(0xFF0066CC),
                                 fontSize = 12.sp
                             )
                         }
@@ -136,18 +150,37 @@ fun LoginScreen(navController: NavController) {
 
                     Button(
                         onClick = {
-                          navController.navigate("home_screen")
-                          },
+                            authViewModel.login(email, password)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
                         shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003366)) // Dark blue button
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003366)),
+                        enabled = loginState !is LoginState.Loading
                     ) {
-                        Text("Sign In", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        if (loginState is LoginState.Loading) {
+                            CircularProgressIndicator(color = Color.White)
+                        } else {
+                            Text("Sign In", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    when (loginState) {
+                        is LoginState.Success -> {
+                            // Navigate on successful login
+                            navController.navigate("home_screen")
+                        }
+                        is LoginState.Error -> {
+                            val errorMessage = (loginState as LoginState.Error).message
+                            Text(text = "Error: $errorMessage", color = MaterialTheme.colorScheme.error)
+                        }
+                        else -> {
+                            // No state-specific UI
+                        }
+                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -172,7 +205,7 @@ fun LoginScreen(navController: NavController) {
 
                     IconButton(onClick = { /* Handle fingerprint login */ }) {
                         Image(
-                            painter = painterResource(id = R.drawable.fingerprint), // Replace with your fingerprint icon
+                            painter = painterResource(id = R.drawable.fingerprint),
                             contentDescription = "Sign in with fingerprint",
                             modifier = Modifier.size(64.dp)
                         )
@@ -197,7 +230,7 @@ fun LoginScreen(navController: NavController) {
                         TextButton(onClick = { /* Handle Sign Up click */ }) {
                             Text(
                                 text = "Sign Up",
-                                color = Color(0xFF0066CC), // Blue link color
+                                color = Color(0xFF0066CC),
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -212,7 +245,7 @@ fun LoginScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    MaterialTheme { // Use your app's theme
+    MaterialTheme {
         val navController = rememberNavController()
         LoginScreen(navController = navController)
     }

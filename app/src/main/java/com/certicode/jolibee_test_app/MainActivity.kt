@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.certicode.jolibee_test_app.presentation.ContactPeopleAddScreen
 import com.certicode.jolibee_test_app.presentation.HomeScreen
-import com.certicode.jolibee_test_app.presentation.LoginScreen
+import com.certicode.jolibee_test_app.presentation.login.LoginScreen
 import com.certicode.jolibee_test_app.presentation.category.CategoryAddScreen
 import com.certicode.jolibee_test_app.presentation.category.CategoryScreen
 import com.certicode.jolibee_test_app.presentation.category.CategoryUpdateScreen
