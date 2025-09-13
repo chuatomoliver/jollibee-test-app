@@ -1,4 +1,4 @@
-### jollibee-test-app
+# jollibee-test-app
 This is a test application for Jollibee, built using Kotlin and Jetpack Compose. The app demonstrates user registration and authentication by integrating with a Laravel API.
 
 ## Features
@@ -45,10 +45,12 @@ Screenshots
 API Endpoints
 The application uses the following API endpoint for user registration:
 
-POST https://test-app-laravel.tmc-innovations.com/api/auth//login
-POST https://test-app-laravel.tmc-innovations.com/api/auth/register
+## POST https://test-app-laravel.tmc-innovations.com/api/auth//login
 
 <img width="1308" height="739" alt="image" src="https://github.com/user-attachments/assets/8f08c059-4def-4dcd-9387-0ae3e252dfd3" />
+
+## POST https://test-app-laravel.tmc-innovations.com/api/auth/register
+
 <img width="1293" height="699" alt="image" src="https://github.com/user-attachments/assets/af85d9a2-0b5e-48b5-bd09-2b7274f9d6f6" />
 
 
@@ -58,4 +60,4 @@ app/src/main/java/com/certicode/jolibee_test_app/: The main source code director
 
 network/: Contains ApiService.kt and RetrofitClient.kt for network operations.
 
-presentation/: Contains RegistrationScreen.kt for the UI.
+presentation/: Contains Screen folder for the UIs.
