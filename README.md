@@ -1,6 +1,8 @@
 # jollibee-test-app
 This is a test application for Jollibee, built using Kotlin and Jetpack Compose. The app demonstrates user registration and authentication by integrating with a Laravel API.
 
+[![Screen Recording 2025 09 14 at 12 17 45\u202fAM](https://img.youtube.com/vi/JdDzk09r5IE/0.jpg)](https://youtu.be/JdDzk09r5IE)
+
 ## Features
 User Registration: Allows new users to create an account by providing their name, email, and password.
 
