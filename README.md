@@ -22,6 +22,8 @@ Retrofit: A type-safe HTTP client for Android and Java.
 
 Coroutines: Used for asynchronous API calls to prevent blocking the main thread.
 
+Room Databse: Used for Database Storage
+
 ## Architecture
 This application follows the principles of MVVM (Model-View-ViewModel) and Clean Architecture.
 
